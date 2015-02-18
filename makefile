@@ -1,9 +1,4 @@
 
-##########------------------------------------------------------##########
-##########              Project-specific Details                ##########
-##########    Check these every time you start a new project    ##########
-##########------------------------------------------------------##########
-
 MCU   = atmega8u2 
 F_CPU = 16000000
 BAUD  = 38400
@@ -23,31 +18,13 @@ LOCAL_SOURCE =
 EXTRA_SOURCE_DIR = 
 EXTRA_SOURCE_FILES = 
 
-##########------------------------------------------------------##########
-##########                 Programmer Defaults                  ##########
-##########          Set up once, then forget about it           ##########
-##########        (Can override.  See bottom of file.)          ##########
-##########------------------------------------------------------##########
-
-PROGRAMMER_TYPE = 
-# extra arguments to avrdude: baud rate, chip type, -F flag, etc.
-PROGRAMMER_ARGS = 	
-
-##########------------------------------------------------------##########
-##########                   Makefile Magic!                    ##########
-##########         Summary:                                     ##########
-##########             We want a .hex file                      ##########
-##########        Compile source files into .elf                ##########
-##########        Convert .elf file into .hex                   ##########
-##########        You shouldn't need to edit below.             ##########
-##########------------------------------------------------------##########
-
 ## Defined programs / locations
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 AVRSIZE = avr-size
 AVRDUDE = avrdude
+AVRDFU  = dfu-programmer
 
 ## Compilation options, type man avr-gcc if you're curious.
 CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_SOURCE_DIR)
@@ -122,7 +99,9 @@ squeaky_clean:
 ##########------------------------------------------------------##########
 
 flash: $(TARGET).hex 
-	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$<
+	sudo $(AVRDFU) $(MCU) erase
+	sudo $(AVRDFU) $(MCU) flash $(TARGET).hex
+
 
 ## An alias
 program: flash
