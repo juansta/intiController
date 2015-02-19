@@ -1,18 +1,30 @@
 #include <avr/io.h>                        /* Defines pins, ports, etc */
 #include <util/delay.h>                     /* Functions to waste time */
 
+class Flick
+{
+public:
+    Flick(int delay)
+        :m_delay(delay)
+    {
+        DDRB |= 0b0000001;
+    }
+
+    void go()
+    {
+        PORTB = (PORTB ^ 0xFF);
+        _delay_ms(m_delay);
+    }
+
+private:
+    int m_delay;
+};
+
 int main(void) {
-    DDRB |= 0b0000001;            /* Data Direction Register B:
-                                     writing a one to the bit
-                                     enables output. */
-    while (1) {
+    Flick flick(100);
 
-        PORTB = 0b00000001;          /* Turn on first LED bit/pin in PORTB */
-        _delay_ms(1000);                                           /* wait */
+    while (1)
+        flick.go();
 
-        PORTB = 0b00000000;          /* Turn off all B pins, including LED */
-        _delay_ms(1000);                                           /* wait */
-
-    }                                                  /* End event loop */
-    return (0);                            /* This line is never reached */
+    return 0;
 }
