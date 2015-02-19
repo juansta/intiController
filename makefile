@@ -1,13 +1,12 @@
-
+OBJDIR = obj
+BINDIR = bin
 MCU   = atmega8u2 
 F_CPU = 16000000
 BAUD  = 38400
-## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
-## This is where your main() routine lives 
+## This is where main() lives 
 MAIN = main.cpp
 
-## If you've split your program into multiple files, 
 ## include the additional .c source (in same directory) here 
 ## (and include the .h files in your foo.c)
 LOCAL_SOURCE =
@@ -19,7 +18,7 @@ EXTRA_SOURCE_DIR =
 EXTRA_SOURCE_FILES = 
 
 ## Defined programs / locations
-CC = avr-gcc
+CC      = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 AVRSIZE = avr-size
@@ -27,7 +26,7 @@ AVRDUDE = avrdude
 AVRDFU  = dfu-programmer
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_SOURCE_DIR)
+CFLAGS  = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_SOURCE_DIR)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall 
 CFLAGS += -g -ggdb
@@ -38,7 +37,7 @@ CFLAGS += -std=c++11
 
 ## Lump target and extra source files together
 TARGET = $(strip $(basename $(MAIN)))
-SRC = $(TARGET).cpp
+SRC    = $(TARGET).cpp
 EXTRA_SOURCE = $(addprefix $(EXTRA_SOURCE_DIR), $(EXTRA_SOURCE_FILES))
 SRC += $(EXTRA_SOURCE) 
 SRC += $(LOCAL_SOURCE) 
@@ -52,14 +51,14 @@ OBJ = $(SRC:.cpp=.o)
 ## Generic Makefile targets.  (Only .hex file is necessary)
 all: $(TARGET).hex
 
-%.hex: %.elf
-	$(OBJCOPY) -R .eeprom -O ihex $< $@
+%.hex:%.elf
+	$(OBJCOPY) -R .eeprom -O ihex $(OBJDIR)/$< $(BINDIR)/$@
 
 %.elf: $(SRC)
-	$(CC) $(CFLAGS) $(SRC) --output $@ 
+	$(CC) $(CFLAGS) $(SRC) --output $(OBJDIR)/$@ 
 
 %.eeprom: %.elf
-	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ 
+	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $(OBJDIR)/$< $(BINDIR)/$@ 
 
 debug:
 	@echo
@@ -78,59 +77,31 @@ disasm: disassemble
 eeprom: $(TARGET).eeprom
 
 %.lst: %.elf
-	$(OBJDUMP) -S $< > $@
+	$(OBJDUMP) -S $(OBJDIR)$< > $@
 
 # Optionally show how big the resulting program is 
 size:  $(TARGET).elf
 	$(AVRSIZE) -C --mcu=$(MCU) $(TARGET).elf
 
 clean:
-	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
-	$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
+	rm -f $(OBJDIR)/$(TARGET).elf $(BINDIR)/$(TARGET).hex $(OBJDIR)/$(TARGET).obj \
+	$(OBJDIR)/$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
 	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~ \
-	$(TARGET).eeprom
+	$(BINDIR)/$(TARGET).eeprom
 
 squeaky_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~
-
-##########------------------------------------------------------##########
-##########              Programmer-specific details             ##########
-##########           Flashing code to AVR using avrdude         ##########
-##########------------------------------------------------------##########
 
 flash: $(TARGET).hex 
 	sudo $(AVRDFU) $(MCU) erase
 	sudo $(AVRDFU) $(MCU) flash $(TARGET).hex
 
-
 ## An alias
 program: flash
 
 flash_eeprom: $(TARGET).eeprom
-	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U eeprom:w:$<
-
-avrdude_terminal:
-	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -nt
-
-## If you've got multiple programmers that you use, 
-## you can define them here so that it's easy to switch.
-## To invoke, use something like `make flash_arduinoISP`
-flash_usbtiny: PROGRAMMER_TYPE = usbtiny
-flash_usbtiny: PROGRAMMER_ARGS =  # USBTiny works with no further arguments
-flash_usbtiny: flash
-
-flash_usbasp: PROGRAMMER_TYPE = usbasp
-flash_usbasp: PROGRAMMER_ARGS =  # USBasp works with no further arguments
-flash_usbasp: flash
-
-flash_arduinoISP: PROGRAMMER_TYPE = avrisp
-flash_arduinoISP: PROGRAMMER_ARGS = -b 19200 -P /dev/ttyACM0 
-## (for windows) flash_arduinoISP: PROGRAMMER_ARGS = -b 19200 -P com5
-flash_arduinoISP: flash
-
-flash_109: PROGRAMMER_TYPE = avr109
-flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
-flash_109: flash
+	sudo $(AVRDFU) $(MCU) erase
+	sudo $(AVRDFU) $(MCU) eeprom-flash $(BINDIR)/$(TARGET).hex
 
 ##########------------------------------------------------------##########
 ##########       Fuse settings and suitable defaults            ##########
