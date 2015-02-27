@@ -87,7 +87,7 @@ clean:
 	rm -f $(OBJDIR)/$(TARGET).elf $(BINDIR)/$(TARGET).hex $(OBJDIR)/$(TARGET).obj \
 	$(OBJDIR)/$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
 	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~ \
-	$(BINDIR)/TARGET).eeprom
+	$(BINDIR)/$(TARGET).eeprom
 
 squeaky_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~
