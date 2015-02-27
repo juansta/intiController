@@ -94,7 +94,7 @@ squeaky_clean:
 
 flash: $(TARGET).hex 
 	sudo $(AVRDFU) $(MCU) erase
-	sudo $(AVRDFU) $(MCU) flash $(TARGET).hex
+	sudo $(AVRDFU) $(MCU) flash $(BINDIR)/$(TARGET).hex
 
 ## An alias
 program: flash
