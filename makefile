@@ -1,21 +1,23 @@
 OBJDIR = obj
 BINDIR = bin
-MCU   = atmega8u2 
-F_CPU = 16000000
-BAUD  = 38400
+MCU    = atmega8u2 
+F_CPU  = 16000000
+BAUD   = 38400
 
 ## This is where main() lives 
 MAIN = main.cpp
 
 ## include the additional .c source (in same directory) here 
 ## (and include the .h files in your foo.c)
-LOCAL_SOURCE =
+LOCAL_SOURCE = 
 
 ## Here you can link to one more directory (and multiple .c files)
 # EXTRA_SOURCE_DIR = ../AVR-Programming-Library/
 # EXTRA_SOURCE_FILES = USART.c
-EXTRA_SOURCE_DIR = 
-EXTRA_SOURCE_FILES = 
+EXTRA_SOURCE_DIR   = ./src/
+EXTRA_SOURCE_FILES = flick.cpp
+
+EXTRA_INCLUDE_DIR = ./include/
 
 ## Defined programs / locations
 CC      = avr-gcc
@@ -26,7 +28,7 @@ AVRDUDE = avrdude
 AVRDFU  = dfu-programmer
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS  = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_SOURCE_DIR)
+CFLAGS  = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_INCLUDE_DIR)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall 
 CFLAGS += -g -ggdb

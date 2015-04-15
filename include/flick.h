@@ -23,6 +23,6 @@ public:
     void go();
 
 private:
-    int m_delay;
+    const int m_delay;
 };
 

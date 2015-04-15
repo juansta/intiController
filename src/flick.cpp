@@ -29,5 +29,6 @@ Flick::Flick(int delay)
 void Flick::go()
 {
     PORTB = (PORTB ^ 0xFF);
-    _delay_ms(m_delay);
+    //_delay_ms(m_delay);
+    _delay_ms(1000);
 }
