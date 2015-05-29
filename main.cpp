@@ -1,6 +1,5 @@
 #include <flick.h>
 
-test
 int main(void) {
     Flick flick(100);
 
