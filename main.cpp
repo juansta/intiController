@@ -1,8 +1,5 @@
 #include <flick.h>
 
-/*
- * main program entrance
- */
 int main(void) {
     Flick flick(100);
 
