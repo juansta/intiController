@@ -25,22 +25,71 @@
 #include <lcd.h>
 #include <delays.h>
 #include <avr/power.h>
+#include <avr/interrupt.h>
 
-int main(void) {
-    Rotary rotary(DDRB, 1);
+volatile unsigned int button;
+volatile unsigned int left;
+volatile unsigned int right;
+volatile uint8_t portbhistory = 0xFF;     // default is high because the pull-up
+bool spin;
+
+ISR(PCINT0_vect)
+{
+    if (!spin)
+    {
+        uint8_t changedbits = PINB ^ portbhistory;
+        portbhistory = PINB;
+
+        if(changedbits & (1 << PB5))
+        {
+            button = button + 1;
+        }
+
+        if(changedbits & (1 << PB6))
+        {
+            left = left + 1;
+        }
+
+        if(changedbits & (1 << PB7))
+        {
+            right = right + 1;
+        }
+    }
+}
+
+int main(void)
+{
     Lcd lcd;
     float i = 0;
+    left = right = button = 0;
 
     clock_prescale_set(clock_div_1);
+
+    DDRB = 0x00;
+    PORTB |= 0xF0;
+
+    PCICR  |= (1 << PCIE0);
+    PCMSK0 |= (1 << PCINT2);
+    PCMSK0 |= (1 << PCINT3);
+    PCMSK0 |= (1 << PCINT4);
+    PCMSK0 |= (1 << PCINT5);
+    PCMSK0 |= (1 << PCINT6);
+    PCMSK0 |= (1 << PCINT7);
+
+    sei();
 
     while (1)
     {
          lcd.home();
-         lcd.write("else - %.1f", i);
-         _delay_ms(100);
+         lcd.write("Timer - %.2f", i);
+         lcd.setCursor(1,0);
+         lcd.write("PC-%d L-%d R-%d", button, left, right);
+         _delay_ms(10);
 
-         i = i + 0.1f;
+         i = i + 0.01f;
     }
+
+    cli();
 
     return 0;
 }
