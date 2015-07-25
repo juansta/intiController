@@ -15,7 +15,7 @@ LOCAL_SOURCE =
 # EXTRA_SOURCE_DIR = ../AVR-Programming-Library/
 # EXTRA_SOURCE_FILES = USART.c
 EXTRA_SOURCE_DIR   = ./src/
-EXTRA_SOURCE_FILES = lcd.cpp  rotary.cpp  ST7036.cpp
+EXTRA_SOURCE_FILES = lcd.cpp  rotary.cpp
 EXTRA_INCLUDE_DIR = ./include/
 
 # List Assembler source files here.
