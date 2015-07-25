@@ -28,7 +28,7 @@ int main(void) {
     Rotary rotary(DDRB, 1);
     Lcd lcd;
 
-    lcd.write((const uint8_t*)"ST0736", 6);
+    lcd.write((const uint8_t*)"ST0736");
 
     lcd.setCursor(1, 1);
     lcd.blink_on();
