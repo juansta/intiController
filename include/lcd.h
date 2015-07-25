@@ -86,8 +86,8 @@ public:
 
     virtual void write(uint8_t, size_t);
     */
-   void write(const uint8_t *buffer, size_t size);
-   void write(const uint8_t *buffer);
+    void write(const uint8_t *buffer, size_t size);
+    void write(const char *buffer, ...);
 
    /**
     Clear the display and set the cursor to 0,0

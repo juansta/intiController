@@ -23,14 +23,24 @@
 #include <global.h>
 #include <rotary.h>
 #include <lcd.h>
+#include <delays.h>
+#include <avr/power.h>
 
 int main(void) {
     Rotary rotary(DDRB, 1);
     Lcd lcd;
+    float i = 0;
 
-    lcd.write((const uint8_t*)"ST0736");
+    clock_prescale_set(clock_div_1);
 
-    lcd.setCursor(1, 1);
-    lcd.blink_on();
+    while (1)
+    {
+         lcd.home();
+         lcd.write("else - %.1f", i);
+         _delay_ms(100);
+
+         i = i + 0.1f;
+    }
+
     return 0;
 }

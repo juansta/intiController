@@ -7,6 +7,8 @@
 #include <local_maths.h>
 #include <delays.h>
 #include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "lcd.h"
 
@@ -125,22 +127,27 @@ void Lcd::write(const uint8_t *buffer, size_t size)
         for (size_t i = 0; i < size; i++, buffer++)
             i2c_write(*buffer);
         i2c_stop();
-        delay_ms(_charDelay);
     }
 }
-void Lcd::write(const uint8_t *buffer)
+
+void Lcd::write(const char *buffer, ...)
 {
     // If the LCD has been initialised correctly, write to it
     if (_initialised)
     {
-        uint8_t size = strlen((const char*)buffer);
+        // Contains debug messages. Not static, as we need to be re-entrant...
+        char    msg_buf[40];
+        va_list ap;
+        va_start(ap, buffer);
+        int n = vsnprintf(msg_buf, 40, buffer, ap);
 
         i2c_start(_i2cAddress);
         i2c_write(RAM_WRITE_CMD);
-        for (size_t i = 0; i < size; i++, buffer++)
-            i2c_write(*buffer);
+        for (uint8_t i = 0; i < n; i++)
+            i2c_write(msg_buf[i]);
         i2c_stop();
-        delay_ms(_charDelay);
+
+        va_end(ap);
     }
 }
 
