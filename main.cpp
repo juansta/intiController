@@ -56,12 +56,12 @@ int main(void)
         else if (btn == Rotary::LEFT)
         {
             lcd.setCursor(1, 0);
-            lcd.write("COUNT-%d   ", btn_rot--);
+            lcd.write("COUNT-%d   ", btn_rot-- >> 1);
         }
         else if (btn == Rotary::RIGHT)
         {
             lcd.setCursor(1, 0);
-            lcd.write("COUNT-%d   ", btn_rot++);
+            lcd.write("COUNT-%d   ", btn_rot++ >> 1);
         }
 
         if (timer.ticked())
