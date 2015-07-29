@@ -15,7 +15,7 @@ LOCAL_SOURCE =
 # EXTRA_SOURCE_DIR = ../AVR-Programming-Library/
 # EXTRA_SOURCE_FILES = USART.c
 EXTRA_SOURCE_DIR   = ./src/
-EXTRA_SOURCE_FILES = lcd.cpp rotary.cpp timer.cpp
+EXTRA_SOURCE_FILES = lcd.cpp rotary.cpp timer.cpp menu.cpp
 EXTRA_INCLUDE_DIR = ./include/
 
 # List Assembler source files here.

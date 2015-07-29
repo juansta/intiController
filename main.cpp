@@ -23,22 +23,17 @@
 #include <global.h>
 #include <rotary.h>
 #include <delays.h>
-#include <lcd.h>
 #include <timer.h>
-
+#include <menu.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
 
-
 int main(void)
 {
-    Lcd    lcd;
     Timer  timer;
     Rotary rotary;
-
-    int btn_cnt = 0;
-    int btn_rot = 0;
+    Menu   menu;
 
     clock_prescale_set(clock_div_1);
 
@@ -46,29 +41,18 @@ int main(void)
 
     while (1)
     {
-        lcd.home();
         Rotary::button btn = rotary.check();
         if (btn == Rotary::CLICK)
         {
-            lcd.home();
-            lcd.write("PC-%u", btn_cnt++);
+            menu.process(Menu::CLICK);
         }
         else if (btn == Rotary::LEFT)
         {
-            lcd.setCursor(1, 0);
-            lcd.write("COUNT-%d   ", btn_rot-- >> 1);
-        }
+            menu.process(Menu::DOWN);
+       }
         else if (btn == Rotary::RIGHT)
         {
-            lcd.setCursor(1, 0);
-            lcd.write("COUNT-%d   ", btn_rot++ >> 1);
-        }
-
-        if (timer.ticked())
-        {
-            lcd.home();
-
-            timer.reset();
+            menu.process(Menu::UP);
         }
     }
 
