@@ -40,10 +40,34 @@ private:
     // display output
     Lcd m_lcd;
 
-    event_ret showSplash(event);
+    // main level menu items
+    event_ret mainUnit(event);
+    event_ret mainLights(event);
+    event_ret mainStatus(event);
+
+    // menu items that appear under the "unit" heading
+    event_ret setTime(event);
+    event_ret setTimeZone(event);
+    event_ret setMimicZone(event);
+    event_ret setLcd (event);
+    event_ret setTimeout(event);
+    event_ret unitExit(event);
+
+    // menu items that appear under the "lights" heading
+    event_ret setMode(event);
+    event_ret setMax(event);
+    event_ret setWMax(event);
+    event_ret setBMax(event);
+    event_ret setRBMax(event);
+    event_ret setRMax(event);
+    event_ret setGMax(event);
+    event_ret setYMax(event);
+    event_ret setVMax(event);
+    event_ret lightExit(event);
+
+    // menu items that appear unde the "status" heading
     event_ret showTime(event);
     event_ret showTemperature(event);
-
-    event_ret setTime(event);
-    event_ret setLcd (event);
+    event_ret showSplash(event);
+    event_ret showExit(event);
 };

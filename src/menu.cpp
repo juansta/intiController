@@ -25,11 +25,11 @@ Menu::Menu()
     (this->*m_currentMenu)(FOCUS);
 }
 
-bool Menu::process(event _event)
+bool Menu::process(event newEvent)
 {
     bool ret = false;
     menu_item old_menu = m_currentMenu;
-    event_ret result = (this->*m_currentMenu)(_event);
+    event_ret result = (this->*m_currentMenu)(newEvent);
 
     if (m_currentMenu != old_menu)
         ret = process(FOCUS);
@@ -50,7 +50,8 @@ bool Menu::process(event _event)
     return ret;
 }
 
-Menu::event_ret Menu::showSplash(event newEvent)
+// main level menu items
+Menu::event_ret Menu::mainUnit(event newEvent)
 {
     event_ret ret = ERROR;
 
@@ -58,10 +59,121 @@ Menu::event_ret Menu::showSplash(event newEvent)
     {
         case FOCUS:
             m_lcd.clear();
-            m_lcd.setCursor(0,0);
-            m_lcd.write("showSplash");
-            m_lcd.setCursor(1,0);
-            m_lcd.write("%s", LONG_VERSION);
+            m_lcd.write("1. Unit Settings");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            m_currentMenu = &Menu::setTime;
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::mainStatus;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::mainLights;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::mainLights(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("2. Emitter Settings");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            m_currentMenu = &Menu::setMode;
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::mainUnit;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::mainStatus;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::mainStatus(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("3. Status");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            m_currentMenu = &Menu::showTime;
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::mainLights;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::mainUnit;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setTime(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting Time");
             ret = HANDLED;
             break;
 
@@ -74,12 +186,12 @@ Menu::event_ret Menu::showSplash(event newEvent)
             break;
 
         case DOWN:
-            m_currentMenu = &Menu::showTemperature;
+            m_currentMenu = &Menu::setTimeout;
             ret = HANDLED;
             break;
 
         case UP:
-            m_currentMenu = &Menu::showTime;
+            m_currentMenu = &Menu::setTimeZone;
             ret = HANDLED;
             break;
 
@@ -88,7 +200,563 @@ Menu::event_ret Menu::showSplash(event newEvent)
             ret = NOT_HANDLED;
             break;
     }
+     return ret;
+}
+Menu::event_ret Menu::setTimeZone(event newEvent)
+{
+    event_ret ret = ERROR;
 
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Settings Timezone");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setTime;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setMimicZone;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setMimicZone(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting MIMIC Zone");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setTimeZone;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setLcd;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setLcd (event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Set LCD Setting");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setMimicZone;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setTimeout;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setTimeout(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting Timeout");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setLcd;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::unitExit;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::unitExit(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Exit");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            m_currentMenu = &Menu::mainUnit;
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setTimeout;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setTime;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setMode(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting Mode");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setVMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setMax(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting Max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setWMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setMode;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setWMax(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting WHITE max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setBMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setBMax(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Set BLUE max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setRBMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setWMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setRBMax(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Set ROYAL BLUE max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setBMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setRMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setRMax(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting RED max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setRBMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setGMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setGMax(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting GREEN max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setRMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setYMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::setYMax(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting YELLOW max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setGMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setVMax;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setVMax(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Setting UV max");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setYMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::lightExit;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+    return ret;
+}
+Menu::event_ret Menu::lightExit(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Exit");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            m_currentMenu = &Menu::mainLights;
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setVMax;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::setMode;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
     return ret;
 }
 Menu::event_ret Menu::showTime(event newEvent)
@@ -99,7 +767,7 @@ Menu::event_ret Menu::showTime(event newEvent)
     {
         case FOCUS:
             m_lcd.clear();
-            m_lcd.write("showTime");
+            m_lcd.write("Showing Current time");
             ret = HANDLED;
             break;
 
@@ -137,7 +805,7 @@ Menu::event_ret Menu::showTemperature(event newEvent)
     {
         case FOCUS:
             m_lcd.clear();
-            m_lcd.write("showTemperature");
+            m_lcd.write("Showing temperature");
             ret = HANDLED;
             break;
 
@@ -167,15 +835,83 @@ Menu::event_ret Menu::showTemperature(event newEvent)
 
     return ret;
 }
-Menu::event_ret Menu::setTime(event newEvent)
+Menu::event_ret Menu::showSplash(event newEvent)
 {
     event_ret ret = ERROR;
 
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.setCursor(0,0);
+            m_lcd.write("showSplash");
+            m_lcd.setCursor(1,0);
+            m_lcd.write("%s", LONG_VERSION);
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::showTemperature;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::showExit;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+
     return ret;
 }
-Menu::event_ret Menu::setLcd (event newEvent)
+Menu::event_ret Menu::showExit(event newEvent)
 {
     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Exit");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            m_currentMenu = &Menu::mainStatus;
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::showSplash;
+            ret = HANDLED;
+            break;
+
+        case UP:
+            m_currentMenu = &Menu::showTime;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
 
     return ret;
 }
