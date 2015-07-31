@@ -35,13 +35,16 @@ int main(void)
     Rotary rotary;
     Menu   menu;
 
+    uint8_t  tick = 0;
+    uint16_t ms = 0;
+
     clock_prescale_set(clock_div_1);
 
     sei();
 
     while (1)
     {
-        Rotary::button btn = rotary.check();
+        Rotary::button btn = rotary.check(ms);
         if (btn == Rotary::CLICK)
         {
             menu.process(Menu::CLICK);
@@ -49,10 +52,20 @@ int main(void)
         else if (btn == Rotary::LEFT)
         {
             menu.process(Menu::DOWN);
-       }
+        }
         else if (btn == Rotary::RIGHT)
         {
             menu.process(Menu::UP);
+        }
+
+        if (timer.ticked())
+        {
+             tick++;
+             if (tick == 125)
+             {
+                 ms++;
+                 tick = 0;
+             }
         }
     }
 
