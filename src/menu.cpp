@@ -446,12 +446,12 @@ Menu::event_ret Menu::setMax(event newEvent)
             break;
 
         case DOWN:
-            m_currentMenu = &Menu::setWMax;
+            m_currentMenu = &Menu::setMode;
             ret = HANDLED;
             break;
 
         case UP:
-            m_currentMenu = &Menu::setMode;
+            m_currentMenu = &Menu::setWMax;
             ret = HANDLED;
             break;
 
@@ -520,12 +520,12 @@ Menu::event_ret Menu::setBMax(event newEvent)
             break;
 
         case DOWN:
-            m_currentMenu = &Menu::setRBMax;
+            m_currentMenu = &Menu::setWMax;
             ret = HANDLED;
             break;
 
         case UP:
-            m_currentMenu = &Menu::setWMax;
+            m_currentMenu = &Menu::setRBMax;
             ret = HANDLED;
             break;
 
