@@ -18,6 +18,7 @@
 
 #include <menu.h>
 #include <revision>
+#include <rtc.h>
 
 Menu::Menu()
 : m_currentMenu(&Menu::showSplash)
@@ -842,12 +843,18 @@ Menu::event_ret Menu::showSplash(event newEvent)
     switch (newEvent)
     {
         case FOCUS:
-            m_lcd.clear();
-            m_lcd.setCursor(0,0);
-            m_lcd.write("showSplash");
-            m_lcd.setCursor(1,0);
-            m_lcd.write("%s", LONG_VERSION);
-            ret = HANDLED;
+            {
+                Rtc rtc;
+                rtc.setCharger(2);
+                DateTime dt = rtc.now();
+
+                m_lcd.clear();
+                m_lcd.setCursor(0,0);
+                m_lcd.write("%u/%02u/%02u %02u:%02u:%02u", dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(), dt.second());
+                m_lcd.setCursor(1,0);
+                m_lcd.write("%s", LONG_VERSION);
+                ret = HANDLED;
+            }
             break;
 
         case TICK:
