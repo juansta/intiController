@@ -3,12 +3,15 @@
 // 2012-11-08 RAM methods - idreammicro.com
 // 2012-11-14 SQW/OUT methods - idreammicro.com
 
+#include <global.h>
 #include <i2cmaster.h>
 #include <avr/pgmspace.h>
 #include <avr/io.h>
 #include "rtc.h"
 
 #define BQ32000_ADDRESS         0x68
+#define READ                    0x01
+#define WRITE                   0x00
 // BQ32000 register addresses:
 #define BQ32000_CAL_CFG1        0x07
 #define BQ32000_TCH2            0x08
@@ -31,8 +34,6 @@
 
 #define SECONDS_PER_DAY         86400L
 
-////////////////////////////////////////////////////////////////////////////////
-// utility code, some of this could be exposed in the DateTime API if needed
 
 static const uint8_t daysInMonth [] PROGMEM = {
   31,28,31,30,31,30,31,31,30,31,30,31
@@ -134,79 +135,99 @@ long DateTime::get() const {
     return time2long(days, hh, mm, ss);
 }
 
-void Rtc::adjust(const DateTime& dt) {
-    i2c_start(BQ32000_ADDRESS);
-    i2c_write((byte) 0);
-    i2c_write(bin2bcd(dt.second()));
-    i2c_write(bin2bcd(dt.minute()));
-    i2c_write(bin2bcd(dt.hour()));
-    i2c_write(bin2bcd(0));
-    i2c_write(bin2bcd(dt.day()));
-    i2c_write(bin2bcd(dt.month()));
-    i2c_write(bin2bcd(dt.year() - 2000));
-    i2c_stop();
+Rtc::Rtc()
+{
+    i2c_init();
+}
+void Rtc::adjust(const DateTime& dt) 
+{
+    if(i2c_start(BQ32000_ADDRESS | WRITE))
+    {
+        if (i2c_write(0))
+        {
+            i2c_write(bin2bcd(dt.second()));
+            i2c_write(bin2bcd(dt.minute()));
+            i2c_write(bin2bcd(dt.hour()));
+            i2c_write(bin2bcd(0));
+            i2c_write(bin2bcd(dt.day()));
+            i2c_write(bin2bcd(dt.month()));
+            i2c_write(bin2bcd(dt.year() - 2000));
+            i2c_stop();
+        }
+    }
 }
 
-DateTime Rtc::now() {
-    i2c_start(BQ32000_ADDRESS);
-    i2c_write((byte) 0);
-    i2c_stop();
+DateTime Rtc::now()
+{
+    uint8_t ss = 0;
+    uint8_t mm = 0;
+    uint8_t hh = 0;
+    uint8_t d  = 0;
+    uint8_t m  = 0;
+    uint16_t y = 0;
 
-    i2c_read(BQ32000_ADDRESS, 7);
-    uint8_t ss = bcd2bin(i2c_read());
-    uint8_t mm = bcd2bin(i2c_read());
-    uint8_t hh = bcd2bin(i2c_read());
-    i2c_read();
-    uint8_t d = bcd2bin(i2c_read());
-    uint8_t m = bcd2bin(i2c_read());
-    uint16_t y = bcd2bin(i2c_read()) + 2000;
+    i2c_start(BQ32000_ADDRESS | WRITE);
+
+    if (i2c_write(0))
+    {
+        i2c_rep_start(BQ32000_ADDRESS | READ);
+
+        ss = bcd2bin(i2c_read(false));
+        mm = bcd2bin(i2c_read(false));
+        hh = bcd2bin(i2c_read(false));
+        d  = bcd2bin(i2c_read(false));
+        m  = bcd2bin(i2c_read(false));
+        y  = bcd2bin(i2c_read()) + 2000;
+
+        i2c_stop();
+    }
 
     return DateTime (y, m, d, hh, mm, ss);
 }
 
-void Rtc::setIRQ(uint8_t state) {
-    /* Set IRQ square wave output state: 0=disabled, 1=1Hz, 2=512Hz.
-     */
-  uint8_t reg, value;
-    if (state) {
-      // Setting the frequency is a bit complicated on the BQ32000:
-        i2c_start(BQ32000_ADDRESS);
-	i2c_write(BQ32000_SFKEY1);
-	i2c_write(BQ32000_SFKEY1_VAL);
-	i2c_write(BQ32000_SFKEY2_VAL);
-	i2c_write((state == 1) ? BQ32000_FTF_1HZ : BQ32000_FTF_512HZ);
-	i2c_stop();
+void Rtc::setIRQ(uint8_t state)
+{
+    // Set IRQ square wave output state: 0=disabled, 1=1Hz, 2=512Hz.
+    if (state) 
+    {
+        // Setting the frequency is a bit complicated on the BQ32000:
+        if (i2c_start(BQ32000_ADDRESS | WRITE))
+        {
+            i2c_write(BQ32000_SFKEY1);
+            i2c_write(BQ32000_SFKEY1_VAL);
+            i2c_write(BQ32000_SFKEY2_VAL);
+            i2c_write((state == 1) ? BQ32000_FTF_1HZ : BQ32000_FTF_512HZ);
+            i2c_stop();
+        }
     }
-    value = readRegister(BQ32000_CAL_CFG1);
+
+    uint8_t value = readRegister(BQ32000_CAL_CFG1);
     value = (!state) ? value & ~(1<<BQ32000__FT) : value | (1<<BQ32000__FT);
     writeRegister(BQ32000_CAL_CFG1, value);
 }
 
-void Rtc::setIRQLevel(uint8_t level) {
-    /* Set IRQ output level when IRQ square wave output is disabled to
-     * LOW or HIGH.
-     */
-    uint8_t value;
+void Rtc::setIRQLevel(uint8_t level)
+{
     // The IRQ active level bit is in the same register as the calibration
     // settings, so we preserve its current state:
-    value = readRegister(BQ32000_CAL_CFG1);
+    uint8_t value = readRegister(BQ32000_CAL_CFG1);
     value = (!level) ? value & ~(1<<BQ32000__OUT) : value | (1<<BQ32000__OUT);
     writeRegister(BQ32000_CAL_CFG1, value);
 }
 
-void Rtc::setCalibration(int8_t value) {
-    /* Sets the calibration value to given value in the range -31 - 31, which
-     * corresponds to -126ppm - +63ppm; see table 13 in th BQ32000 datasheet.
-     */
-    uint8_t val;
+void Rtc::setCalibration(int8_t value)
+{
+    // Sets the calibration value to given value in the range -31 - 31, which
+    // corresponds to -126ppm - +63ppm; see table 13 in th BQ32000 datasheet.
     if (value > 31) value = 31;
     if (value < -31) value = -31;
-    val = (uint8_t) (value < 0) ? -value | (1<<BQ32000__CAL_S) : value;
+    uint8_t val = (uint8_t) (value < 0) ? -value | (1<<BQ32000__CAL_S) : value;
     val |= readRegister(BQ32000_CAL_CFG1) & ~0x3f;
     writeRegister(BQ32000_CAL_CFG1, val);
 }
 
-void Rtc::setCharger(int state) {
+void Rtc::setCharger(int state)
+{
     /* If using a super capacitor instead of a battery for backup power, use this
      * method to set the state of the trickle charger: 0=disabled, 1=low-voltage
      * charge, 2=high-voltage charge. In low-voltage charge mode, the super cap is
@@ -232,22 +253,55 @@ void Rtc::setCharger(int state) {
 }
 
 
-uint8_t Rtc::readRegister(uint8_t address) {
-    i2c_start(BQ32000_ADDRESS);
-    i2c_write((byte) address);
-    i2c_stop();
-    i2c_start(DS1307_ADDRESS, 1);
-    // Get register state:
-    return i2c_read();
+uint8_t Rtc::readRegister(uint8_t address)
+{
+    uint8_t ret = 0;
+
+    if (i2c_start(BQ32000_ADDRESS | WRITE))
+    {
+        i2c_write(address);
+        i2c_rep_start(BQ32000_ADDRESS | READ);
+
+        ret = i2c_read();
+        i2c_stop();
+    }
+
+    return ret;
 }
 
-uint8_t Rtc::writeRegister(uint8_t address, uint8_t value) {
-    i2c_start(BQ32000_ADDRESS);
-    i2c_write(address);
-    i2c_write(value);
-    i2c_stop();
+bool Rtc::writeRegister(uint8_t address, uint8_t * values, uint8_t len)
+{
+    bool ret = false;
+
+    if (i2c_start(BQ32000_ADDRESS | WRITE))
+    {
+        uint8_t written = 0;
+        i2c_write(address);
+        while (written < len && i2c_write(*values++))
+            written++;
+
+        i2c_stop();
+
+        ret = (written == len);
+    }
+
+    return ret;
+}
+bool Rtc::writeRegister(uint8_t address, uint8_t value)
+{
+    bool ret = false;
+
+    if (i2c_start(BQ32000_ADDRESS | WRITE))
+    {
+        i2c_write(address);
+        ret = i2c_write(value);
+        i2c_stop();
+    }
+
+    return ret;
 }
 
-uint8_t Rtc::isrunning() {
+uint8_t Rtc::isrunning()
+{
     return !(readRegister(0x0)>>7);
 }
