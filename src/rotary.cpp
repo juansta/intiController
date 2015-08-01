@@ -40,9 +40,17 @@ ISR(PCINT0_vect)
         btn = !(PINB & (1 << PB5));
     else
     {
-        a ? up = b : up = !b;
-
-        spun = true;
+        //a ? up = b : up = !b;
+        if (a && b)
+        {
+            up = true;
+            spun = true;
+        }
+        else if (a && !b)
+        {
+            up = false;
+            spun = true;
+        }
     }
 
     portbhistory = PINB;
@@ -56,7 +64,7 @@ Rotary::Rotary()
     PORTB |= 0xF0;
 
     PCMSK0 |= (1 << PCINT5); // push button
-    PCMSK0 |= (1 << PCINT6); // encoder A
+    PCMSK0 |= (1 << PCINT7); // encoder A
     PCICR  |= (1 << PCIE0);
 }
 

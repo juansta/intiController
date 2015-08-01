@@ -20,12 +20,10 @@
  *
  */
 
-#include <global.h>
 #include <rotary.h>
 #include <delays.h>
 #include <timer.h>
 #include <menu.h>
-#include <rtc.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
@@ -35,7 +33,6 @@ int main(void)
     Timer  timer;
     Rotary rotary;
     Menu   menu;
-    Rtc    rtc;
 
     uint8_t  tick = 0;
     uint16_t ms = 0;
@@ -43,8 +40,6 @@ int main(void)
     clock_prescale_set(clock_div_1);
 
     sei();
-
-    rtc.adjust(DateTime(2015, 10, 10, 1, 2, 3));
 
     while (1)
     {
