@@ -9,7 +9,7 @@
 #include <avr/io.h>
 #include "rtc.h"
 
-#define BQ32000_ADDRESS         0x68
+#define BQ32000_ADDRESS         0xD0
 #define READ                    0x01
 #define WRITE                   0x00
 // BQ32000 register addresses:
@@ -139,9 +139,11 @@ Rtc::Rtc()
 {
     i2c_init();
 }
+Rtc::~Rtc()
+{}
 void Rtc::adjust(const DateTime& dt) 
 {
-    if(i2c_start(BQ32000_ADDRESS | WRITE))
+    if (i2c_start(BQ32000_ADDRESS | WRITE))
     {
         if (i2c_write(0))
         {
@@ -156,7 +158,6 @@ void Rtc::adjust(const DateTime& dt)
         }
     }
 }
-
 DateTime Rtc::now()
 {
     uint8_t ss = 0;
@@ -177,7 +178,7 @@ DateTime Rtc::now()
         hh = bcd2bin(i2c_read(false));
         d  = bcd2bin(i2c_read(false));
         m  = bcd2bin(i2c_read(false));
-        y  = bcd2bin(i2c_read()) + 2000;
+        y  = bcd2bin(i2c_read(true)) + 2000;
 
         i2c_stop();
     }
@@ -262,7 +263,7 @@ uint8_t Rtc::readRegister(uint8_t address)
         i2c_write(address);
         i2c_rep_start(BQ32000_ADDRESS | READ);
 
-        ret = i2c_read();
+        ret = i2c_read(true);
         i2c_stop();
     }
 
