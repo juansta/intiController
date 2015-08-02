@@ -173,9 +173,17 @@ Menu::event_ret Menu::setTime(event newEvent)
     switch (newEvent)
     {
         case FOCUS:
-            m_lcd.clear();
-            m_lcd.write("Setting Time");
-            ret = HANDLED;
+            {
+                Rtc rtc;
+                DateTime dt = rtc.now();
+                m_lcd.clear();
+                m_lcd.write("Set Unit Time");
+                m_lcd.setCursor(1,0);
+                m_lcd.write("%u/%02u/%02u %02u:%02u:%02u",
+                        dt.year(), dt.month(), dt.day(),
+                        dt.hour(), dt.minute(), dt.second());
+                ret = HANDLED;
+            }
             break;
 
         case TICK:
@@ -183,6 +191,9 @@ Menu::event_ret Menu::setTime(event newEvent)
             break;
 
         case CLICK:
+                m_lcd.setCursor(1,0);
+            m_lcd.blink_on();
+
             ret = HANDLED;
             break;
 
