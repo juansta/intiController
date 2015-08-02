@@ -28,27 +28,26 @@ volatile bool up;
 volatile bool spun;
 int enc_count;
 
-volatile uint8_t portbhistory = 0xFF;     // default is high because the pull-up
+volatile uint8_t portbhistory = 0xFF;
 
 ISR(PCINT0_vect)
 {
     uint8_t changedbits = PINB ^ portbhistory;
-    bool a = PINB & (1 << PB6);
-    bool b = PINB & (1 << PB7);
 
     if (changedbits & (1 << PB5))
         btn = !(PINB & (1 << PB5));
     else
     {
-        //a ? up = b : up = !b;
-        if (a && b)
+        if (!spun)
         {
-            up = true;
-            spun = true;
-        }
-        else if (a && !b)
-        {
-            up = false;
+            bool a = PINB & (1 << PB6);
+            bool b = PINB & (1 << PB7);
+
+            if (a)
+                up = b;
+            else
+                up = !b;
+
             spun = true;
         }
     }
@@ -64,7 +63,7 @@ Rotary::Rotary()
     PORTB |= 0xF0;
 
     PCMSK0 |= (1 << PCINT5); // push button
-    PCMSK0 |= (1 << PCINT7); // encoder A
+    PCMSK0 |= (1 << PCINT6); // encoder A
     PCICR  |= (1 << PCIE0);
 }
 
