@@ -16,3 +16,5 @@ src/timer.cpp
 main.cpp
 include/datetime.h
 src/datetime.cpp
+include/eeprom.h
+src/eeprom.cpp
