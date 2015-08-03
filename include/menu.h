@@ -66,8 +66,23 @@ private:
     event_ret lightExit(event);
 
     // menu items that appear unde the "status" heading
-    event_ret showTime(event);
-    event_ret showTemperature(event);
     event_ret showSplash(event);
-    event_ret showExit(event);
+    event_ret statusExit(event);
+
+    // configuration event handlers
+    event_ret settingTime(event);
+    event_ret settingTimeZone(event);
+    event_ret settingMimicTimeZone(event);
+    event_ret settingLcd(event);
+    event_ret settingTimeout(event);
+
+    // lighting mode event handlers
+    event_ret settingMode();
+    event_ret settingMax();
+    event_ret settingWMax();
+    event_ret settingBMax();
+    event_ret settingRBMax();
+    event_ret settingGMax();
+    event_ret settingYMax();
+    event_ret settingVMax();
 };

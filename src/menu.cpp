@@ -145,7 +145,7 @@ Menu::event_ret Menu::mainStatus(event newEvent)
             break;
 
         case CLICK:
-            m_currentMenu = &Menu::showTime;
+            m_currentMenu = &Menu::showSplash;
             ret = HANDLED;
             break;
 
@@ -191,9 +191,7 @@ Menu::event_ret Menu::setTime(event newEvent)
             break;
 
         case CLICK:
-                m_lcd.setCursor(1,0);
-            m_lcd.blink_on();
-
+            m_currentMenu = &Menu::settingTime;
             ret = HANDLED;
             break;
 
@@ -771,82 +769,6 @@ Menu::event_ret Menu::lightExit(event newEvent)
     }
     return ret;
 }
-Menu::event_ret Menu::showTime(event newEvent)
-{
-    event_ret ret = ERROR;
-
-    switch (newEvent)
-    {
-        case FOCUS:
-            m_lcd.clear();
-            m_lcd.write("Showing Current time");
-            ret = HANDLED;
-            break;
-
-        case TICK:
-            ret = HANDLED;
-            break;
-
-        case CLICK:
-            ret = HANDLED;
-            break;
-
-        case DOWN:
-            m_currentMenu = &Menu::showSplash;
-            ret = HANDLED;
-            break;
-
-        case UP:
-            m_currentMenu = &Menu::showTemperature;
-            ret = HANDLED;
-            break;
-
-        case NOTHING:
-        default:
-            ret = NOT_HANDLED;
-            break;
-    }
-
-    return ret;
-}
-Menu::event_ret Menu::showTemperature(event newEvent)
-{
-    event_ret ret = ERROR;
-
-    switch (newEvent)
-    {
-        case FOCUS:
-            m_lcd.clear();
-            m_lcd.write("Showing temperature");
-            ret = HANDLED;
-            break;
-
-        case TICK:
-            ret = HANDLED;
-            break;
-
-        case CLICK:
-            ret = HANDLED;
-            break;
-
-        case DOWN:
-            m_currentMenu = &Menu::showTime;
-            ret = HANDLED;
-            break;
-
-        case UP:
-            m_currentMenu = &Menu::showSplash;
-            ret = HANDLED;
-            break;
-
-        case NOTHING:
-        default:
-            ret = NOT_HANDLED;
-            break;
-    }
-
-    return ret;
-}
 Menu::event_ret Menu::showSplash(event newEvent)
 {
     event_ret ret = ERROR;
@@ -877,12 +799,12 @@ Menu::event_ret Menu::showSplash(event newEvent)
             break;
 
         case DOWN:
-            m_currentMenu = &Menu::showTemperature;
+            m_currentMenu = &Menu::statusExit;
             ret = HANDLED;
             break;
 
         case UP:
-            m_currentMenu = &Menu::showExit;
+            m_currentMenu = &Menu::statusExit;
             ret = HANDLED;
             break;
 
@@ -894,7 +816,7 @@ Menu::event_ret Menu::showSplash(event newEvent)
 
     return ret;
 }
-Menu::event_ret Menu::showExit(event newEvent)
+Menu::event_ret Menu::statusExit(event newEvent)
 {
     event_ret ret = ERROR;
 
@@ -921,7 +843,177 @@ Menu::event_ret Menu::showExit(event newEvent)
             break;
 
         case UP:
-            m_currentMenu = &Menu::showTime;
+            m_currentMenu = &Menu::showSplash;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+
+    return ret;
+}
+Menu::event_ret Menu::settingTime(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            ret = HANDLED;
+            break;
+
+        case UP:
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+
+    return ret;
+}
+Menu::event_ret Menu::settingTimeZone(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            ret = HANDLED;
+            break;
+
+        case UP:
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+
+    return ret;
+}
+Menu::event_ret Menu::settingMimicTimeZone(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            ret = HANDLED;
+            break;
+
+        case UP:
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+
+    return ret;
+}
+Menu::event_ret Menu::settingLcd(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            ret = HANDLED;
+            break;
+
+        case UP:
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+
+    return ret;
+}
+Menu::event_ret Menu::settingTimeout(event newEvent)
+{
+    event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            ret = HANDLED;
+            break;
+
+        case UP:
             ret = HANDLED;
             break;
 
