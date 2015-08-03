@@ -771,26 +771,33 @@ Menu::event_ret Menu::lightExit(event newEvent)
 }
 Menu::event_ret Menu::showSplash(event newEvent)
 {
+    static uint8_t page = 0;
     event_ret ret = ERROR;
 
     switch (newEvent)
     {
         case FOCUS:
             {
-                Rtc rtc;
-                rtc.setCharger(2);
-                DateTime dt = rtc.now();
-
-                m_lcd.clear();
-                m_lcd.setCursor(0,0);
-                m_lcd.write("%u/%02u/%02u %02u:%02u:%02u", dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(), dt.second());
-                m_lcd.setCursor(1,0);
-                m_lcd.write("%s", LONG_VERSION);
-                ret = HANDLED;
+                ret = (this->*m_currentMenu)(TICK);
             }
             break;
 
         case TICK:
+            switch (page)
+            {
+            case 0:
+                {
+
+                    Rtc rtc;
+                    DateTime dt = rtc.now();
+
+                    m_lcd.clear();
+                    m_lcd.setCursor(0,0);
+                    m_lcd.write("%u/%02u/%02u %02u:%02u:%02u", dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(), dt.second());
+                    m_lcd.setCursor(1,0);
+                    m_lcd.write("%s", LONG_VERSION);
+                }
+            }
             ret = HANDLED;
             break;
 
