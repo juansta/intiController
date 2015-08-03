@@ -37,6 +37,8 @@ private:
 
     uint8_t   m_timeOut;
 
+    uint8_t increment(uint8_t value, int8_t inc, uint8_t max);
+
     // display output
     Lcd m_lcd;
 

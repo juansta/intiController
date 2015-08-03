@@ -172,42 +172,41 @@ Menu::event_ret Menu::setTime(event newEvent)
 
     switch (newEvent)
     {
-        case FOCUS:
-            {
-                DateTime dt = Rtc::now();
-                m_lcd.clear();
-                m_lcd.write("Set Unit Time");
-                m_lcd.setCursor(1,0);
-                m_lcd.write("%u/%02u/%02u %02u:%02u:%02u",
-                        dt.year(), dt.month(), dt.day(),
-                        dt.hour(), dt.minute(), dt.second());
-                ret = HANDLED;
-            }
-            break;
+    case FOCUS:
+    {
+        m_lcd.clear();
+        m_lcd.write("Set Unit Time");
+    }
+    case TICK:
+    {
+        DateTime dt = Rtc::now();
+        m_lcd.setCursor(1,0);
+        m_lcd.write("%u/%02u/%02u %02u:%02u:%02u",
+            dt.year(), dt.month(), dt.day(),
+            dt.hour(), dt.minute(), dt.second());
+        ret = HANDLED;
+        break;
+    }
 
-        case TICK:
-            ret = HANDLED;
-            break;
+    case CLICK:
+        m_currentMenu = &Menu::settingTime;
+        ret = HANDLED;
+        break;
 
-        case CLICK:
-            m_currentMenu = &Menu::settingTime;
-            ret = HANDLED;
-            break;
+    case DOWN:
+        m_currentMenu = &Menu::setTimeout;
+        ret = HANDLED;
+        break;
 
-        case DOWN:
-            m_currentMenu = &Menu::setTimeout;
-            ret = HANDLED;
-            break;
+    case UP:
+        m_currentMenu = &Menu::setTimeZone;
+        ret = HANDLED;
+        break;
 
-        case UP:
-            m_currentMenu = &Menu::setTimeZone;
-            ret = HANDLED;
-            break;
-
-        case NOTHING:
-        default:
-            ret = NOT_HANDLED;
-            break;
+    case NOTHING:
+    default:
+        ret = NOT_HANDLED;
+        break;
     }
      return ret;
 }
@@ -859,36 +858,101 @@ Menu::event_ret Menu::statusExit(event newEvent)
 
     return ret;
 }
+uint8_t Menu::increment(uint8_t value, int8_t inc, uint8_t max)
+{
+    return (value + inc) % max;
+}
 Menu::event_ret Menu::settingTime(event newEvent)
 {
+    static uint8_t loc       =  0;
+    static uint8_t values[6] = {0, 0, 0, 0, 0, 0};
+           uint8_t offset[6] = {3, 6, 9, 12, 15, 18};
+           uint8_t maxval[6] = {99, 12, 31, 23, 59, 59};
+
     event_ret ret = ERROR;
 
     switch (newEvent)
     {
-        case FOCUS:
-            ret = HANDLED;
-            break;
+    case FOCUS:
+    {
+        loc = 0;
+        DateTime dt  = Rtc::now();
+        m_lcd.clear();
+        m_lcd.write("Update Time");
 
-        case TICK:
-            ret = HANDLED;
-            break;
+        m_lcd.setCursor(1,0);
+        m_lcd.write("%u/%02u/%02u %02u:%02u:%02u",
+            dt.year(), dt.month(), dt.day(),
+            dt.hour(), dt.minute(), dt.second());
 
-        case CLICK:
-            ret = HANDLED;
-            break;
+        values[5] = dt.second();
+        values[4] = dt.minute();
+        values[3] = dt.hour();
+        values[2] = dt.day();
+        values[1] = dt.month();
+        values[0] = dt.year() - 2000;
 
-        case DOWN:
-            ret = HANDLED;
-            break;
+        m_lcd.setCursor(1, 3);
+        m_lcd.blink_on();
+    }
 
-        case UP:
-            ret = HANDLED;
-            break;
+    case TICK:
+    {
+        // we dont really care about the ticker when setting the time
+        ret = HANDLED;
+        break;
+    }
 
-        case NOTHING:
-        default:
-            ret = NOT_HANDLED;
-            break;
+    case CLICK:
+    {
+        // go to next loc/item until all items are entered
+        if (loc < 6)
+            loc++;
+        else
+        {
+            DateTime newTime(values[0] + 2000, values[1], values[2],
+                    values[3], values[4], values[5]);
+            Rtc::adjust(newTime);
+            m_lcd.blink_off();
+
+            m_currentMenu = &Menu::setTime;
+        }
+        ret = HANDLED;
+        break;
+    }
+
+    case DOWN:
+    {
+        values[loc] = increment(values[loc], -1, maxval[loc]);
+        m_lcd.setCursor(1,0);
+        m_lcd.write("%u/%02u/%02u %02u:%02u:%02u",
+            values[5], values[4], values[3],
+            values[2], values[1], values[0]);
+
+        m_lcd.setCursor(1, offset[loc]);
+        m_lcd.blink_on();
+        ret = HANDLED;
+        break;
+    }
+
+    case UP:
+    {
+        values[loc] = increment(values[loc], 1, maxval[loc]);
+        m_lcd.setCursor(1,0);
+        m_lcd.write("%u/%02u/%02u %02u:%02u:%02u",
+            values[5], values[4], values[3],
+            values[2], values[1], values[0]);
+
+        m_lcd.setCursor(1, offset[loc]);
+        m_lcd.blink_on();
+        ret = HANDLED;
+        break;
+    }
+
+    case NOTHING:
+    default:
+        ret = NOT_HANDLED;
+        break;
     }
 
     return ret;

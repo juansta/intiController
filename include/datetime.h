@@ -31,9 +31,9 @@ public:
     const uint16_t year     () const { return 2000 + yOff;  }
     const uint8_t  month    () const { return m;  }
     const uint8_t  day      () const { return d;  }
-    const uint8_t  hour     () const { return hh;  }
-    const uint8_t  minute   () const { return mm;  }
-    const uint8_t  second   () const { return ss;  }
+    const uint8_t  hour     () const { return hh; }
+    const uint8_t  minute   () const { return mm; }
+    const uint8_t  second   () const { return ss; }
     const uint8_t  dayOfWeek() const;
     // 32-bit times as seconds since 1/1/2000
     long get() const;
