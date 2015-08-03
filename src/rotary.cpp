@@ -21,49 +21,53 @@
 #include <avr/interrupt.h>
 #include <rotary.h>
 
-volatile bool btn;
-int button_count;
-
-volatile bool up;
-volatile bool spun;
-int enc_count;
+volatile bool    btn  = false;
+volatile bool    up   = false;
+volatile uint8_t spun = 0;
 
 volatile uint8_t portbhistory = 0xFF;
 
 ISR(PCINT0_vect)
 {
     uint8_t changedbits = PINB ^ portbhistory;
+    portbhistory = PINB;
 
+    // check for push button
     if (changedbits & (1 << PB5))
         btn = !(PINB & (1 << PB5));
     else
     {
-        if (!spun)
+        // check for a change on either A or B inputs
+        bool a = PINB & (1 << PB6);
+        bool b = PINB & (1 << PB7);
+
+        if (changedbits & (1 << PB6))
         {
-            bool a = PINB & (1 << PB6);
-            bool b = PINB & (1 << PB7);
-
-            if (a)
-                up = b;
-            else
-                up = !b;
-
-            spun = true;
+            if ((!a && b) || (a && !b))
+            {
+                spun++;
+                up = true;
+            }
+        }
+        else if (changedbits & (1 << PB7))
+        {
+            if ((!b && a) || (b && !a))
+            {
+                spun++;
+                up = false;
+            }
         }
     }
-
-    portbhistory = PINB;
 }
 
 Rotary::Rotary()
 {
-    btn = spun = false;
-    button_count = enc_count = 0;
-    DDRB = 0x00;
-    PORTB |= 0xF0;
+    DDRB    = 0x00;
+    PORTB  |= 0xF0;
 
     PCMSK0 |= (1 << PCINT5); // push button
     PCMSK0 |= (1 << PCINT6); // encoder A
+    PCMSK0 |= (1 << PCINT7); // encoder A
     PCICR  |= (1 << PCIE0);
 }
 
@@ -76,11 +80,10 @@ Rotary::button Rotary::check()
         ret = CLICK;
         btn = false;
     }
-    else if (spun)
+    else if (spun >= 2)
     {
         up ? ret = RIGHT : ret = LEFT;
-
-        spun = false;
+        spun = 0;
     }
 
     return ret;
