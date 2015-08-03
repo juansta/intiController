@@ -52,9 +52,10 @@
  * - changed interrupt disabling so that the previous IRQ state is retored
  * Version 1.0: basic functionality
  */
-#include <avr/io.h>
 
 #pragma once
+
+#include <inttypes.h>
 
 // Init function. Needs to be called once in the beginning.
 // Returns false if SDA or SCL are low, which probably means

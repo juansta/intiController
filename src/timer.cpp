@@ -27,6 +27,7 @@ ISR(TIMER0_OVF_vect)
     TCNT0 = 0x05;
     tick  = true;
 }
+
 Timer::Timer()
     : m_tick(0.008f)
 {

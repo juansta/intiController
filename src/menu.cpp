@@ -174,8 +174,7 @@ Menu::event_ret Menu::setTime(event newEvent)
     {
         case FOCUS:
             {
-                Rtc rtc;
-                DateTime dt = rtc.now();
+                DateTime dt = Rtc::now();
                 m_lcd.clear();
                 m_lcd.write("Set Unit Time");
                 m_lcd.setCursor(1,0);
@@ -787,9 +786,7 @@ Menu::event_ret Menu::showSplash(event newEvent)
             {
             case 0:
                 {
-
-                    Rtc rtc;
-                    DateTime dt = rtc.now();
+                    DateTime dt = Rtc::now();
 
                     m_lcd.clear();
                     m_lcd.setCursor(0,0);

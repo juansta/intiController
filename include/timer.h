@@ -22,8 +22,8 @@ class Timer
 public:
     Timer();
 
-    bool ticked();
-    void reset();
+    bool  ticked();
+    void  reset();
     float getTick();
 
 private:

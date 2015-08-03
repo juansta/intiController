@@ -52,9 +52,12 @@
  * - changed interrupt disabling so that the previous IRQ state is retored
  * Version 1.0: basic functionality
  */
+
+
 #include <avr/io.h>
 #include <i2cmaster.h>
 #include <global.h>
+
 // constants for reading & writing
 #define I2C_READ    1
 #define I2C_WRITE   0

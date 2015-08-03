@@ -21,8 +21,6 @@
  */
 
 #include <rotary.h>
-#include <delays.h>
-#include <timer.h>
 #include <rtc.h>
 #include <menu.h>
 
@@ -31,7 +29,6 @@
 
 int main(void)
 {
-    Timer  timer;
     Rotary rotary;
     Rtc    rtc;
     Menu   menu;
@@ -42,6 +39,11 @@ int main(void)
 
     while (1)
     {
+        // generate our one second tick
+        if (rtc.tick())
+            menu.process(Menu::TICK);
+
+        // check our rotary controller for any events
         Rotary::button btn = rotary.check();
         if (btn == Rotary::CLICK)
         {
@@ -55,9 +57,6 @@ int main(void)
         {
             menu.process(Menu::UP);
         }
-
-        if (rtc.tick())
-            menu.process(Menu::TICK);
     }
 
     cli();

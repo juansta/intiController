@@ -19,10 +19,17 @@
 class Rotary
 {
 public:
+    /**
+     * @brief The button enum defines possible rotary encoder states
+     */
     enum button {NOTHING = 0, CLICK, RIGHT, LEFT};
 
     Rotary();
 
+    /**
+     * @brief Check for any events that have been registered by the interrupt service routine
+     * @return button state
+     */
     button check();
 
 private:
