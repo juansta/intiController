@@ -3,10 +3,12 @@
 // 2012-11-08 RAM methods - idreammicro.com
 // 2012-11-14 SQW/OUT methods - idreammicro.com
 
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
 #include <global.h>
 #include <i2cmaster.h>
 #include <avr/pgmspace.h>
-#include <avr/io.h>
 #include "rtc.h"
 
 #define BQ32000_ADDRESS         0xD0
@@ -135,13 +137,33 @@ long DateTime::get() const {
     return time2long(days, hh, mm, ss);
 }
 
+volatile bool ticked = false;
+
+ISR(PCINT1_vect)
+{
+    ticked = PINC & (1 << PC2);
+}
 Rtc::Rtc()
 {
     i2c_init();
+    setCharger(2);
+    setIRQ(1);
+
+    DDRC   &= ~(1 << PC2);
+    PORTC  |=  (1 << PC2);
+
+    PCMSK1 |= (1 << PCINT11); // push button
+    PCICR  |= (1 << PCIE1);
 }
 Rtc::~Rtc()
 {}
-void Rtc::adjust(const DateTime& dt) 
+bool Rtc::tick()
+{
+    bool ret = ticked;
+    ticked = false;
+     return ret;
+}
+void Rtc::adjust(const DateTime& dt)
 {
     if (i2c_start(BQ32000_ADDRESS | WRITE))
     {
@@ -189,7 +211,7 @@ DateTime Rtc::now()
 void Rtc::setIRQ(uint8_t state)
 {
     // Set IRQ square wave output state: 0=disabled, 1=1Hz, 2=512Hz.
-    if (state) 
+    if (state)
     {
         // Setting the frequency is a bit complicated on the BQ32000:
         if (i2c_start(BQ32000_ADDRESS | WRITE))

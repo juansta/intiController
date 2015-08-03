@@ -23,6 +23,7 @@
 #include <rotary.h>
 #include <delays.h>
 #include <timer.h>
+#include <rtc.h>
 #include <menu.h>
 
 #include <avr/power.h>
@@ -32,10 +33,8 @@ int main(void)
 {
     Timer  timer;
     Rotary rotary;
+    Rtc    rtc;
     Menu   menu;
-
-    uint8_t  tick = 0;
-    uint16_t ms = 0;
 
     clock_prescale_set(clock_div_1);
 
@@ -57,15 +56,8 @@ int main(void)
             menu.process(Menu::UP);
         }
 
-        if (timer.ticked())
-        {
-             tick++;
-             if (tick == 125)
-             {
-                 ms++;
-                 tick = 0;
-             }
-        }
+        if (rtc.tick())
+            menu.process(Menu::TICK);
     }
 
     cli();

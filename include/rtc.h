@@ -37,6 +37,8 @@ public:
     void setCalibration(int8_t value);
     void setCharger(int state);
 
+    bool tick();
+
 private:
     uint8_t readRegister(uint8_t address);
     bool writeRegister(uint8_t address, uint8_t value);
