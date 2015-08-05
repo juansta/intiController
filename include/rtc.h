@@ -49,7 +49,16 @@ private:
     bool writeRegister(uint8_t address, uint8_t value);
     bool writeRegister(uint8_t address, uint8_t * values, uint8_t len);
 
-    static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4);  }
-    static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10);  }
+    static uint8_t bcd2bin (uint8_t val)
+    {
+        return val - 6 * (val >> 4);
+        //return ((val >> 4) & 0xF) * 10 + ((val) & 0xF);
+    }
+    static uint8_t bin2bcd (uint8_t val)
+    {
+        return val + 6 * (val / 10);
+        //return  ((val / 10) << 4) | (val % 10;
+    }
+
 
 };

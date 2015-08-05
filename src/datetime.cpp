@@ -84,12 +84,8 @@ DateTime::DateTime (long t)
 }
 
 DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
-    : yOff(0), m(month), d(day), hh(hour), mm(min), ss(sec)
+    : yOff((year >= 2000) ? (year - 2000) : year), m(month), d(day), hh(hour), mm(min), ss(sec)
 {
-    if (year >= 2000)
-        year -= 2000;
-
-    yOff = year;
 }
 
 // A convenient constructor for using "the compiler's time":

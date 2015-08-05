@@ -83,10 +83,9 @@ bool Rtc::tick()
 
 void Rtc::adjust(const DateTime& dt)
 {
-    i2c_init();
-    if (i2c_start(BQ32000_ADDRESS | WRITE))
+    if (i2c_init())
     {
-        if (i2c_write(0))
+        if (i2c_start(BQ32000_ADDRESS | WRITE) && i2c_write(0))
         {
             i2c_write(bin2bcd(dt.second()));
             i2c_write(bin2bcd(dt.minute()));
@@ -94,7 +93,7 @@ void Rtc::adjust(const DateTime& dt)
             i2c_write(bin2bcd(0));
             i2c_write(bin2bcd(dt.day()));
             i2c_write(bin2bcd(dt.month()));
-            i2c_write(bin2bcd(dt.year() - 2000));
+            i2c_write(bin2bcd(dt.shortyear()));
             i2c_stop();
         }
     }
@@ -108,21 +107,23 @@ DateTime Rtc::now()
     uint8_t m  = 0;
     uint16_t y = 0;
 
-    i2c_init();
-    i2c_start(BQ32000_ADDRESS | WRITE);
-
-    if (i2c_write(0))
+    if (i2c_init())
     {
-        i2c_rep_start(BQ32000_ADDRESS | READ);
+        if (i2c_start(BQ32000_ADDRESS | WRITE) && i2c_write(0))
+        {
+            if (i2c_rep_start(BQ32000_ADDRESS | READ))
+            {
+                ss = Rtc::bcd2bin(i2c_read(false));
+                mm = Rtc::bcd2bin(i2c_read(false));
+                hh = Rtc::bcd2bin(i2c_read(false));
+                d  = Rtc::bcd2bin(i2c_read(false));
+                d  = Rtc::bcd2bin(i2c_read(false));
+                m  = Rtc::bcd2bin(i2c_read(false));
+                y  = Rtc::bcd2bin(i2c_read(true)) + 2000;
 
-        ss = Rtc::bcd2bin(i2c_read(false));
-        mm = Rtc::bcd2bin(i2c_read(false));
-        hh = Rtc::bcd2bin(i2c_read(false));
-        d  = Rtc::bcd2bin(i2c_read(false));
-        m  = Rtc::bcd2bin(i2c_read(false));
-        y  = Rtc::bcd2bin(i2c_read(true)) + 2000;
-
-        i2c_stop();
+                i2c_stop();
+            }
+        }
     }
 
     return DateTime (y, m, d, hh, mm, ss);

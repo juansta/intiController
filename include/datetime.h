@@ -25,15 +25,16 @@ class DateTime
 public:
     DateTime (long t = 0);
     DateTime (uint16_t year, uint8_t month, uint8_t day,
-            uint8_t hour =0, uint8_t min =0, uint8_t sec =0);
+            uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0);
     DateTime (const char* date, const char* time);
 
     const uint16_t year     () const { return 2000 + yOff;  }
-    const uint8_t  month    () const { return m;  }
-    const uint8_t  day      () const { return d;  }
-    const uint8_t  hour     () const { return hh; }
-    const uint8_t  minute   () const { return mm; }
-    const uint8_t  second   () const { return ss; }
+    const uint8_t  shortyear() const { return yOff;}
+    const uint8_t  month    () const { return m;   }
+    const uint8_t  day      () const { return d;   }
+    const uint8_t  hour     () const { return hh;  }
+    const uint8_t  minute   () const { return mm;  }
+    const uint8_t  second   () const { return ss;  }
     const uint8_t  dayOfWeek() const;
     // 32-bit times as seconds since 1/1/2000
     long get() const;
