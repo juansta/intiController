@@ -30,6 +30,26 @@ public:
     Settings();
     ~Settings();
 
+    bool commit();
+
+    bool setMaxTotal(uint8_t);
+    bool setMaxW(uint8_t);
+    bool setMaxRB(uint8_t);
+    bool setMaxB(uint8_t);
+    bool setMaxR(uint8_t);
+    bool setMaxG(uint8_t);
+    bool setMaxY(uint8_t);
+    bool setMaxV(uint8_t);
+
+    bool getMaxTotal(uint8_t&);
+    bool getMaxW(uint8_t&);
+    bool getMaxRB(uint8_t&);
+    bool getMaxB(uint8_t&);
+    bool getMaxR(uint8_t&);
+    bool getMaxG(uint8_t&);
+    bool getMaxY(uint8_t&);
+    bool getMaxV(uint8_t&);
+
 private:
     /**
      * @brief The Configuration struct

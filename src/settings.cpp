@@ -22,3 +22,105 @@ Settings::Settings()
 {}
 Settings::~Settings()
 {}
+bool Settings::commit()
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxTotal(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxW(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxRB(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxB(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxR(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxG(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxY(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::setMaxV(uint8_t)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxTotal(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxW(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxRB(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxB(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxR(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxG(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxY(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
+bool Settings::getMaxV(uint8_t&)
+{
+    bool ret = false;
+
+    return ret;
+}
