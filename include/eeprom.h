@@ -168,11 +168,11 @@ public:
 
 private:
     //Private variables
-    static int _base;
-    static int _memSize;
-    static int _nextAvailableaddress;
+    static int m_base;
+    static int m_memSize;
+    static int m_nextAvailableaddress;
     static int _writeCounts;
-    int _allowedWrites;
+    int m_allowedWrites;
     bool checkWrite(int base,int noOfBytes);
     bool isWriteOk(int address);
     bool isReadOk(int address);

@@ -18,3 +18,5 @@ include/datetime.h
 src/datetime.cpp
 include/eeprom.h
 src/eeprom.cpp
+src/settings.cpp
+include/settings.h

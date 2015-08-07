@@ -18,48 +18,33 @@
 
 #include <eeprom.h>
 
-
-/******************************************************************************
- * Definitions
- ******************************************************************************/
-
- #define _EEPROMEX_VERSION 1_0_0 // software version of this library
- #define _EEPROMEX_DEBUG         // Enables logging of maximum of writes and out-of-memory
-/******************************************************************************
- * Constructors
- ******************************************************************************/
-
-// Boards with ATmega328, Duemilanove, Uno, Uno SMD, Lilypad - 1024 bytes (1 kilobyte)
-// Boards with ATmega1280 or 2560, Arduino Mega series – 4096 bytes (4 kilobytes)
-// Boards with ATmega168, Lilypad, old Nano, Diecimila  – 512 bytes
-// By default we choose conservative settings
 Eeprom::Eeprom()
-  :  _allowedWrites(100)
+  :  m_allowedWrites(1024)
 {
+    while (!isReady());
 }
-
-/******************************************************************************
- * User API
- ******************************************************************************/
 
  /**
  * Set starting position and memory size that EEPROMEx may manage
  */
-void Eeprom::setMemPool(int base, int memSize) {
+void Eeprom::setMemPool(int base, int memSize)
+{
     //Base can only be adjusted if no addresses have already been issued
-    if (_nextAvailableaddress == _base)
-        _base = base;
-        _nextAvailableaddress=_base;
+    if (m_nextAvailableaddress == m_base)
+        m_base = base;
+
+    m_nextAvailableaddress=m_base;
 
     //Ceiling can only be adjusted if not below issued addresses
-    if (memSize >= _nextAvailableaddress )
-        _memSize = memSize;
+    if (memSize >= m_nextAvailableaddress )
+        m_memSize = memSize;
 }
 
 /**
  * Set global maximum of allowed writes
  */
-void Eeprom::setMaxAllowedWrites(int allowedWrites) {
+void Eeprom::setMaxAllowedWrites(int allowedWrites)
+{
 #ifdef _EEPROMEX_DEBUG
     _allowedWrites = allowedWrites;
 #endif
@@ -68,9 +53,10 @@ void Eeprom::setMaxAllowedWrites(int allowedWrites) {
 /**
  * Get a new starting address to write to. Adress is negative if not enough space is available
  */
-int Eeprom::getAddress(int noOfBytes){
-    int availableaddress   = _nextAvailableaddress;
-    _nextAvailableaddress += noOfBytes;
+int Eeprom::getAddress(int noOfBytes)
+{
+    int availableaddress   = m_nextAvailableaddress;
+    m_nextAvailableaddress += noOfBytes;
 
     return availableaddress;
 }
@@ -78,7 +64,8 @@ int Eeprom::getAddress(int noOfBytes){
 /**
  * Check if EEPROM memory is ready to be accessed
  */
-bool Eeprom::isReady() {
+bool Eeprom::isReady()
+{
     return eeprom_is_ready();
 }
 
@@ -94,11 +81,17 @@ uint8_t Eeprom::read(int address)
 /**
  * Read a single bit
  */
-bool Eeprom::readBit(int address, uint8_t bit) {
-      if (bit> 7) return false;
-      if (!isReadOk(address+sizeof(uint8_t))) return false;
+bool Eeprom::readBit(int address, uint8_t bit)
+{
+      if (bit > 7)
+          return false;
+
+      if (!isReadOk(address+sizeof(uint8_t)))
+          return false;
+
       uint8_t byteVal =  eeprom_read_byte((unsigned char *) address);
       uint8_t bytePos = (1 << bit);
+
       return (byteVal & bytePos);
 }
 
@@ -107,7 +100,9 @@ bool Eeprom::readBit(int address, uint8_t bit) {
  */
 uint8_t Eeprom::readByte(int address)
 {
-    if (!isReadOk(address+sizeof(uint8_t))) return 0;
+    if (!isReadOk(address + sizeof(uint8_t)))
+        return 0;
+
     return eeprom_read_byte((unsigned char *) address);
 }
 
@@ -116,7 +111,9 @@ uint8_t Eeprom::readByte(int address)
  */
 uint16_t Eeprom::readInt(int address)
 {
-    if (!isReadOk(address+sizeof(uint16_t))) return 0;
+    if (!isReadOk(address + sizeof(uint16_t)))
+        return 0;
+
     return eeprom_read_word((uint16_t *) address);
 }
 
@@ -125,7 +122,9 @@ uint16_t Eeprom::readInt(int address)
  */
 uint32_t Eeprom::readLong(int address)
 {
-    if (!isReadOk(address+sizeof(uint32_t))) return 0;
+    if (!isReadOk(address + sizeof(uint32_t)))
+        return 0;
+
     return eeprom_read_dword((unsigned long *) address);
 }
 
@@ -134,8 +133,11 @@ uint32_t Eeprom::readLong(int address)
  */
 float Eeprom::readFloat(int address)
 {
-    if (!isReadOk(address+sizeof(float))) return 0;
+    if (!isReadOk(address+sizeof(float)))
+        return 0;
+
     float _value;
+
     readBlock<float>(address, _value);
     return _value;
 }
@@ -145,9 +147,12 @@ float Eeprom::readFloat(int address)
  */
 double Eeprom::readDouble(int address)
 {
-    if (!isReadOk(address+sizeof(double))) return 0;
+    if (!isReadOk(address + sizeof(double)))
+        return 0;
+
     double _value;
     readBlock<double>(address, _value);
+
     return _value;
 }
 
@@ -163,7 +168,8 @@ bool Eeprom::write(int address, uint8_t value)
 /**
  * Write a single bit
  */
-bool Eeprom::writeBit(int address, uint8_t bit, bool value) {
+bool Eeprom::writeBit(int address, uint8_t bit, bool value)
+{
     updateBit(address, bit, value);
     return true;
 }
@@ -173,7 +179,9 @@ bool Eeprom::writeBit(int address, uint8_t bit, bool value) {
  */
 bool Eeprom::writeByte(int address, uint8_t value)
 {
-    if (!isWriteOk(address+sizeof(uint8_t))) return false;
+    if (!isWriteOk(address + sizeof(uint8_t)))
+        return false;
+
     eeprom_write_byte((unsigned char *) address, value);
     return true;
 }
@@ -183,7 +191,9 @@ bool Eeprom::writeByte(int address, uint8_t value)
  */
 bool Eeprom::writeInt(int address, uint16_t value)
 {
-    if (!isWriteOk(address+sizeof(uint16_t))) return false;
+    if (!isWriteOk(address + sizeof(uint16_t)))
+        return false;
+
     eeprom_write_word((uint16_t *) address, value);
     return true;
 }
@@ -193,7 +203,9 @@ bool Eeprom::writeInt(int address, uint16_t value)
  */
 bool Eeprom::writeLong(int address, uint32_t value)
 {
-    if (!isWriteOk(address+sizeof(uint32_t))) return false;
+    if (!isWriteOk(address + sizeof(uint32_t)))
+        return false;
+
     eeprom_write_dword((unsigned long *) address, value);
     return true;
 }
@@ -230,20 +242,21 @@ bool Eeprom::update(int address, uint8_t value)
  */
 bool Eeprom::updateBit(int address, uint8_t bit, bool value)
 {
-      if (bit> 7) return false;
+      if (bit > 7) return false;
 
       uint8_t byteValInput  = readByte(address);
       uint8_t byteValOutput = byteValInput;
+
       // Set bit
-      if (value) {
+      if (value)
         byteValOutput |= (1 << bit);  //Set bit to 1
-      } else {
+      else
         byteValOutput &= ~(1 << bit); //Set bit to 0
-      }
+
       // Store if different from input
-      if (byteValOutput!=byteValInput) {
+      if (byteValOutput!=byteValInput)
         writeByte(address, byteValOutput);
-      }
+
       return true;
 }
 
@@ -328,9 +341,9 @@ bool Eeprom::isReadOk(int address)
     return true;
 }
 
-int Eeprom::_base= 0;
-int Eeprom::_memSize= 512;
-int Eeprom::_nextAvailableaddress= 0;
+int Eeprom::m_base= 0;
+int Eeprom::m_memSize= 512;
+int Eeprom::m_nextAvailableaddress= 0;
 int Eeprom::_writeCounts =0;
 
 Eeprom EEPROM;

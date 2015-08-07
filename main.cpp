@@ -23,6 +23,7 @@
 #include <rotary.h>
 #include <rtc.h>
 #include <menu.h>
+#include <settings.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
@@ -32,6 +33,7 @@ int main(void)
     Rotary rotary;
     Rtc    rtc;
     Menu   menu;
+    Settings settings;
 
     clock_prescale_set(clock_div_1);
 
