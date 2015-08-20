@@ -26,9 +26,9 @@ class Rtc
 public:
     Rtc();
     ~Rtc();
-    void begin() {}
     static void adjust(const DateTime& dt);
     static DateTime now();
+
     uint8_t isrunning();
 
     // Set IRQ output state: 0=disabled, 1=1Hz, 2=512Hz.
@@ -51,13 +51,13 @@ private:
 
     static uint8_t bcd2bin (uint8_t val)
     {
-        return val - 6 * (val >> 4);
-        //return ((val >> 4) & 0xF) * 10 + ((val) & 0xF);
+        //return val - 6 * (val >> 4);
+        return ((val >> 4) & 0xF) * 10 + ((val) & 0xF);
     }
     static uint8_t bin2bcd (uint8_t val)
     {
-        return val + 6 * (val / 10);
-        //return  ((val / 10) << 4) | (val % 10;
+        //return val + 6 * (val / 10);
+        return  ((val / 10) << 4) | (val % 10);
     }
 
 
