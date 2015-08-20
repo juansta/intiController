@@ -300,6 +300,7 @@ Menu::event_ret Menu::setLcd (event newEvent)
             break;
 
         case CLICK:
+            m_currentMenu = &Menu::settingLcd;
             ret = HANDLED;
             break;
 
@@ -907,10 +908,8 @@ Menu::event_ret Menu::settingTime(event newEvent)
     case CLICK:
     {
         // go to next loc/item until all items are entered
-        if (loc < 6)
+        if (++loc < 6)
         {
-            loc++;
-
             m_lcd.setCursor(1, offset[loc]);
             m_lcd.blink_on();
         }
@@ -1031,13 +1030,31 @@ Menu::event_ret Menu::settingMimicTimeZone(event newEvent)
 
     return ret;
 }
+void showrgb(Lcd& lcd, uint8_t offset, uint8_t*vals)
+{
+    lcd.setCursor(1,0);
+    lcd.write("R - %2u G - %2u B - %2u", vals[0], vals[1], vals[2]);
+
+    lcd.setCursor(1, offset);
+
+}
 Menu::event_ret Menu::settingLcd(event newEvent)
 {
+    static uint8_t loc       =  0;
+    static uint8_t values[3] = {0, 0, 0};
+           uint8_t offset[3] = {5,12,19};
+           uint8_t maxval    = 99;
     event_ret ret = ERROR;
 
     switch (newEvent)
     {
         case FOCUS:
+            loc = 0;
+            m_lcd.clear();
+            m_lcd.write("LCD Intensity");
+
+            showrgb(m_lcd, offset[loc], values);
+            m_lcd.blink_on();
             ret = HANDLED;
             break;
 
@@ -1046,14 +1063,26 @@ Menu::event_ret Menu::settingLcd(event newEvent)
             break;
 
         case CLICK:
+            // go to next loc/item until all items are entered
+            if (++loc < 3)
+                m_lcd.setCursor(1, offset[loc]);
+            else
+            {
+                m_lcd.blink_off();
+                m_currentMenu = &Menu::setLcd;
+            }
             ret = HANDLED;
             break;
 
         case DOWN:
+            values[loc] = increment(values[loc],-1, maxval);
+            showrgb(m_lcd, offset[loc], values);
             ret = HANDLED;
             break;
 
         case UP:
+            values[loc] = increment(values[loc], 1, maxval);
+            showrgb(m_lcd, offset[loc], values);
             ret = HANDLED;
             break;
 
