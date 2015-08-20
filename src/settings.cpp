@@ -19,108 +19,119 @@
 #include <settings.h>
 
 Settings::Settings()
-{}
+    : m_updated(0), m_loaded(false)
+{
+    refresh();
+}
 Settings::~Settings()
 {}
 bool Settings::commit()
 {
-    bool ret = false;
+    bool ret = m_updated;
+
+    m_updated = 0;
 
     return ret;
 }
-bool Settings::setMaxTotal(uint8_t)
+void Settings::setMaxTotal(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= TOTAL;
+    m_config.maxTotal = value;
 }
-bool Settings::setMaxW(uint8_t)
+void Settings::setMaxW(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= WHITE;
+    m_config.maxW = value;
 }
-bool Settings::setMaxRB(uint8_t)
+void Settings::setMaxRB(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= ROYAL_BLUE;
+    m_config.maxRB = value;
 }
-bool Settings::setMaxB(uint8_t)
+void Settings::setMaxB(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= BLUE;
+    m_config.maxB = value;
 }
-bool Settings::setMaxR(uint8_t)
+void Settings::setMaxR(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= RED;
+    m_config.maxR = value;
 }
-bool Settings::setMaxG(uint8_t)
+void Settings::setMaxG(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= GREEN;
+    m_config.maxG = value;
 }
-bool Settings::setMaxY(uint8_t)
+void Settings::setMaxY(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= YELLOW;
+    m_config.maxY = value;
 }
-bool Settings::setMaxV(uint8_t)
+void Settings::setMaxV(uint8_t value)
 {
-    bool ret = false;
-
-    return ret;
+    m_updated |= VIOLET;
+    m_config.maxV = value;
 }
-bool Settings::getMaxTotal(uint8_t&)
+bool Settings::getMaxTotal(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxTotal;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxW(uint8_t&)
+bool Settings::getMaxW(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxW;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxRB(uint8_t&)
+bool Settings::getMaxRB(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxRB;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxB(uint8_t&)
+bool Settings::getMaxB(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxB;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxR(uint8_t&)
+bool Settings::getMaxR(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxR;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxG(uint8_t&)
+bool Settings::getMaxG(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxG;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxY(uint8_t&)
+bool Settings::getMaxY(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxY;
 
-    return ret;
+    return m_loaded;
 }
-bool Settings::getMaxV(uint8_t&)
+bool Settings::getMaxV(uint8_t&value)
 {
-    bool ret = false;
+    if (m_loaded)
+        value = m_config.maxV;
 
-    return ret;
+    return m_loaded;
+}
+bool Settings::refresh()
+{
+     bool ret = false;
+
+     return ret;
 }

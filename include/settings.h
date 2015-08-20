@@ -30,25 +30,26 @@ public:
     Settings();
     ~Settings();
 
-    bool commit();
+    bool commit ();
+    bool refresh();
 
-    bool setMaxTotal(uint8_t);
-    bool setMaxW(uint8_t);
-    bool setMaxRB(uint8_t);
-    bool setMaxB(uint8_t);
-    bool setMaxR(uint8_t);
-    bool setMaxG(uint8_t);
-    bool setMaxY(uint8_t);
-    bool setMaxV(uint8_t);
+    void setMaxTotal(uint8_t);
+    void setMaxW    (uint8_t);
+    void setMaxRB   (uint8_t);
+    void setMaxB    (uint8_t);
+    void setMaxR    (uint8_t);
+    void setMaxG    (uint8_t);
+    void setMaxY    (uint8_t);
+    void setMaxV    (uint8_t);
 
     bool getMaxTotal(uint8_t&);
-    bool getMaxW(uint8_t&);
-    bool getMaxRB(uint8_t&);
-    bool getMaxB(uint8_t&);
-    bool getMaxR(uint8_t&);
-    bool getMaxG(uint8_t&);
-    bool getMaxY(uint8_t&);
-    bool getMaxV(uint8_t&);
+    bool getMaxW    (uint8_t&);
+    bool getMaxRB   (uint8_t&);
+    bool getMaxB    (uint8_t&);
+    bool getMaxR    (uint8_t&);
+    bool getMaxG    (uint8_t&);
+    bool getMaxY    (uint8_t&);
+    bool getMaxV    (uint8_t&);
 
 private:
     /**
@@ -65,6 +66,12 @@ private:
         uint8_t maxY;
         uint8_t maxV;
     } m_config;
+
+    enum value {TOTAL, WHITE, ROYAL_BLUE, BLUE, RED, GREEN, YELLOW, VIOLET};
+
+    uint8_t m_updated;
+
+    bool m_loaded;
 
     Eeprom m_eeprom;
 };
