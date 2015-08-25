@@ -60,5 +60,29 @@ private:
         return  ((val / 10) << 4) | (val % 10);
     }
 
+    static const uint8_t BQ32000_ADDRESS         = 0xD0;
+    static const uint8_t READ                    = 0x01;
+    static const uint8_t WRITE                   = 0x00;
 
+    // BQ32000 register addresses:
+    static const uint8_t BQ32000_CAL_CFG1        = 0x07;
+    static const uint8_t BQ32000_TCH2            = 0x08;
+    static const uint8_t BQ32000_CFG2            = 0x09;
+    static const uint8_t BQ32000_SFKEY1          = 0x20;
+    static const uint8_t BQ32000_SFKEY2          = 0x21;
+    static const uint8_t BQ32000_SFR             = 0x22;
+
+    // BQ32000 config bits:
+    static const uint8_t BQ32000__OUT            = 0x07; // CAL_CFG1 - IRQ active state
+    static const uint8_t BQ32000__FT             = 0x06; // CAL_CFG1 - IRQ square wave enable
+    static const uint8_t BQ32000__CAL_S          = 0x05; // CAL_CFG1 - Calibration sign
+    static const uint8_t BQ32000__TCH2_BIT       = 0x05; // TCH2 - Trickle charger switch 2
+    static const uint8_t BQ32000__TCFE           = 0x06; // CFG2 - Trickle FET control
+
+    // BQ32000 config values:
+    static const uint8_t BQ32000_CHARGE_ENABLE   = 0x05; // CFG2 - Trickle charger switch 1 enable
+    static const uint8_t BQ32000_SFKEY1_VAL      = 0x5E;
+    static const uint8_t BQ32000_SFKEY2_VAL      = 0xC7;
+    static const uint8_t BQ32000_FTF_1HZ         = 0x01;
+    static const uint8_t BQ32000_FTF_512HZ       = 0x00;
 };

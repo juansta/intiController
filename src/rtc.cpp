@@ -29,29 +29,6 @@
 #include <i2cmaster.h>
 #include "rtc.h"
 
-#define BQ32000_ADDRESS         0xD0
-#define READ                    0x01
-#define WRITE                   0x00
-// BQ32000 register addresses:
-#define BQ32000_CAL_CFG1        0x07
-#define BQ32000_TCH2            0x08
-#define BQ32000_CFG2            0x09
-#define BQ32000_SFKEY1          0x20
-#define BQ32000_SFKEY2          0x21
-#define BQ32000_SFR             0x22
-// BQ32000 config bits:
-#define BQ32000__OUT            0x07 // CAL_CFG1 - IRQ active state
-#define BQ32000__FT             0x06 // CAL_CFG1 - IRQ square wave enable
-#define BQ32000__CAL_S          0x05 // CAL_CFG1 - Calibration sign
-#define BQ32000__TCH2_BIT       0x05 // TCH2 - Trickle charger switch 2
-#define BQ32000__TCFE           0x06 // CFG2 - Trickle FET control
-// BQ32000 config values:
-#define BQ32000_CHARGE_ENABLE   0x05 // CFG2 - Trickle charger switch 1 enable
-#define BQ32000_SFKEY1_VAL      0x5E
-#define BQ32000_SFKEY2_VAL      0xC7
-#define BQ32000_FTF_1HZ         0x01
-#define BQ32000_FTF_512HZ       0x00
-
 volatile bool ticked = false;
 
 ISR(PCINT1_vect)
@@ -68,7 +45,7 @@ Rtc::Rtc()
     DDRC   &= ~(1 << PC2);
     PORTC  |=  (1 << PC2);
 
-    PCMSK1 |= (1 << PCINT11); // push button
+    PCMSK1 |= (1 << PCINT11);
     PCICR  |= (1 << PCIE1);
 }
 Rtc::~Rtc()
@@ -119,7 +96,7 @@ DateTime Rtc::now()
                 d  = Rtc::bcd2bin(i2c_read(false));
                 d  = Rtc::bcd2bin(i2c_read(false));
                 m  = Rtc::bcd2bin(i2c_read(false));
-                y  = Rtc::bcd2bin(i2c_read(true)) + 2000;
+                y  = Rtc::bcd2bin(i2c_read()) + 2000;
 
                 i2c_stop();
             }
