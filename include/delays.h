@@ -26,4 +26,4 @@ __inline void delay_ms(int ms)
     {
         _delay_ms(1);
     }
-};
+}
