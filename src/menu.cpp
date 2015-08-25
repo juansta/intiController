@@ -19,6 +19,16 @@
 #include <menu.h>
 #include <revision>
 #include <rtc.h>
+#include <settings.h>
+
+
+void showrgb(Lcd& lcd, uint8_t offset, uint8_t*vals)
+{
+    lcd.setCursor(1,0);
+    lcd.write("R - %2u G - %2u B - %2u", vals[0], vals[1], vals[2]);
+
+    lcd.setCursor(1, offset);
+}
 
 Menu::Menu()
 : m_currentMenu(&Menu::showSplash)
@@ -290,11 +300,15 @@ Menu::event_ret Menu::setLcd (event newEvent)
     switch (newEvent)
     {
         case FOCUS:
+        {
+            Settings setting;
+            const Settings::Lcd lcd = setting.getLcd();
             m_lcd.clear();
             m_lcd.write("Set LCD Setting");
+            showrgb(m_lcd, 0, (uint8_t*)&lcd);
             ret = HANDLED;
             break;
-
+        }
         case TICK:
             ret = HANDLED;
             break;
@@ -329,7 +343,7 @@ Menu::event_ret Menu::setTimeout(event newEvent)
     {
         case FOCUS:
             m_lcd.clear();
-            m_lcd.write("Setting Timeout");
+            m_lcd.write("Set Timeout");
             ret = HANDLED;
             break;
 
@@ -1030,34 +1044,36 @@ Menu::event_ret Menu::settingMimicTimeZone(event newEvent)
 
     return ret;
 }
-void showrgb(Lcd& lcd, uint8_t offset, uint8_t*vals)
-{
-    lcd.setCursor(1,0);
-    lcd.write("R - %2u G - %2u B - %2u", vals[0], vals[1], vals[2]);
 
-    lcd.setCursor(1, offset);
-
-}
 Menu::event_ret Menu::settingLcd(event newEvent)
 {
     static uint8_t loc       =  0;
-    static uint8_t values[3] = {0, 0, 0};
            uint8_t offset[3] = {5,12,19};
            uint8_t maxval    = 99;
     event_ret ret = ERROR;
 
+    static union
+    {
+        uint8_t         bytes[3];
+        Settings::Lcd   values;
+    } buffer;
+
     switch (newEvent)
     {
         case FOCUS:
+        {
+            Settings settings;
+            buffer.values = settings.getLcd();
+
             loc = 0;
             m_lcd.clear();
             m_lcd.write("LCD Intensity");
 
-            showrgb(m_lcd, offset[loc], values);
+            showrgb(m_lcd, offset[loc], buffer.bytes);
             m_lcd.blink_on();
             ret = HANDLED;
             break;
-
+        }
         case TICK:
             ret = HANDLED;
             break;
@@ -1068,6 +1084,8 @@ Menu::event_ret Menu::settingLcd(event newEvent)
                 m_lcd.setCursor(1, offset[loc]);
             else
             {
+                Settings settings;
+                settings.setLcd(buffer.values);
                 m_lcd.blink_off();
                 m_currentMenu = &Menu::setLcd;
             }
@@ -1075,14 +1093,14 @@ Menu::event_ret Menu::settingLcd(event newEvent)
             break;
 
         case DOWN:
-            values[loc] = increment(values[loc],-1, maxval);
-            showrgb(m_lcd, offset[loc], values);
+            buffer.bytes[loc] = increment(buffer.bytes[loc],-1, maxval);
+            showrgb(m_lcd, offset[loc], buffer.bytes);
             ret = HANDLED;
             break;
 
         case UP:
-            values[loc] = increment(values[loc], 1, maxval);
-            showrgb(m_lcd, offset[loc], values);
+            buffer.bytes[loc] = increment(buffer.bytes[loc], 1, maxval);
+            showrgb(m_lcd, offset[loc], buffer.bytes);
             ret = HANDLED;
             break;
 

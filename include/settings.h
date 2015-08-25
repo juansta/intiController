@@ -27,51 +27,39 @@
 class Settings
 {
 public:
+    struct Emitters
+    {
+        uint8_t maxTotal;
+        uint8_t maxWhite;
+        uint8_t maxRoyalBlue;
+        uint8_t maxBlue;
+        uint8_t maxRed;
+        uint8_t maxGreen;
+        uint8_t maxYellow;
+        uint8_t maxViolet;
+    };
+
+    struct Lcd
+    {
+        uint8_t maxRed;
+        uint8_t maxGreen;
+        uint8_t maxBlue;
+    };
+
     Settings();
     ~Settings();
 
-    bool commit ();
-    bool refresh();
+    bool setEmitters(const Emitters &values);
+    const Emitters & getEmitters();
 
-    void setMaxTotal(uint8_t);
-    void setMaxW    (uint8_t);
-    void setMaxRB   (uint8_t);
-    void setMaxB    (uint8_t);
-    void setMaxR    (uint8_t);
-    void setMaxG    (uint8_t);
-    void setMaxY    (uint8_t);
-    void setMaxV    (uint8_t);
-
-    bool getMaxTotal(uint8_t&);
-    bool getMaxW    (uint8_t&);
-    bool getMaxRB   (uint8_t&);
-    bool getMaxB    (uint8_t&);
-    bool getMaxR    (uint8_t&);
-    bool getMaxG    (uint8_t&);
-    bool getMaxY    (uint8_t&);
-    bool getMaxV    (uint8_t&);
-
+    bool setLcd(const Lcd &values);
+    const Lcd & getLcd();
 private:
-    /**
-     * @brief The Configuration struct
-     */
-    struct Configuration
-    {
-        uint8_t maxTotal;
-        uint8_t maxW;
-        uint8_t maxRB;
-        uint8_t maxB;
-        uint8_t maxR;
-        uint8_t maxG;
-        uint8_t maxY;
-        uint8_t maxV;
-    } m_config;
+    Emitters m_emitters;
+    Lcd      m_lcd;
 
-    enum value {TOTAL, WHITE, ROYAL_BLUE, BLUE, RED, GREEN, YELLOW, VIOLET};
-
-    uint8_t m_updated;
-
-    bool m_loaded;
+    static const uint8_t EMITTER_OFFSET = 0;
+    static const uint8_t LCD_OFFSET     = 8;
 
     Eeprom m_eeprom;
 };

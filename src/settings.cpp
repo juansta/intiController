@@ -19,119 +19,44 @@
 #include <settings.h>
 
 Settings::Settings()
-    : m_updated(0), m_loaded(false)
 {
-    refresh();
+    m_eeprom.readBlock(EMITTER_OFFSET, m_emitters);
+    m_eeprom.readBlock(LCD_OFFSET, m_lcd);
 }
 Settings::~Settings()
 {}
-bool Settings::commit()
+bool Settings::setEmitters(const Emitters& values)
 {
-    bool ret = m_updated;
+    bool ret = false;
+    uint8_t size = m_eeprom.writeBlock(EMITTER_OFFSET, values);
 
-    m_updated = 0;
+    if (size == sizeof(m_emitters))
+    {
+        m_emitters = values;
+        ret = true;
+    }
 
     return ret;
 }
-void Settings::setMaxTotal(uint8_t value)
+const Settings::Emitters & Settings::getEmitters()
 {
-    m_updated |= TOTAL;
-    m_config.maxTotal = value;
+    return m_emitters;
 }
-void Settings::setMaxW(uint8_t value)
-{
-    m_updated |= WHITE;
-    m_config.maxW = value;
-}
-void Settings::setMaxRB(uint8_t value)
-{
-    m_updated |= ROYAL_BLUE;
-    m_config.maxRB = value;
-}
-void Settings::setMaxB(uint8_t value)
-{
-    m_updated |= BLUE;
-    m_config.maxB = value;
-}
-void Settings::setMaxR(uint8_t value)
-{
-    m_updated |= RED;
-    m_config.maxR = value;
-}
-void Settings::setMaxG(uint8_t value)
-{
-    m_updated |= GREEN;
-    m_config.maxG = value;
-}
-void Settings::setMaxY(uint8_t value)
-{
-    m_updated |= YELLOW;
-    m_config.maxY = value;
-}
-void Settings::setMaxV(uint8_t value)
-{
-    m_updated |= VIOLET;
-    m_config.maxV = value;
-}
-bool Settings::getMaxTotal(uint8_t&value)
-{
-    if (m_loaded)
-        value = m_config.maxTotal;
 
-    return m_loaded;
-}
-bool Settings::getMaxW(uint8_t&value)
+bool Settings::setLcd(const Lcd& values)
 {
-    if (m_loaded)
-        value = m_config.maxW;
+    bool ret = false;
+    uint8_t size = m_eeprom.writeBlock(LCD_OFFSET, values);
 
-    return m_loaded;
+    if (size == sizeof(m_lcd))
+    {
+        m_lcd = values;
+        ret = true;
+    }
+
+    return ret;
 }
-bool Settings::getMaxRB(uint8_t&value)
+const Settings::Lcd & Settings::getLcd()
 {
-    if (m_loaded)
-        value = m_config.maxRB;
-
-    return m_loaded;
-}
-bool Settings::getMaxB(uint8_t&value)
-{
-    if (m_loaded)
-        value = m_config.maxB;
-
-    return m_loaded;
-}
-bool Settings::getMaxR(uint8_t&value)
-{
-    if (m_loaded)
-        value = m_config.maxR;
-
-    return m_loaded;
-}
-bool Settings::getMaxG(uint8_t&value)
-{
-    if (m_loaded)
-        value = m_config.maxG;
-
-    return m_loaded;
-}
-bool Settings::getMaxY(uint8_t&value)
-{
-    if (m_loaded)
-        value = m_config.maxY;
-
-    return m_loaded;
-}
-bool Settings::getMaxV(uint8_t&value)
-{
-    if (m_loaded)
-        value = m_config.maxV;
-
-    return m_loaded;
-}
-bool Settings::refresh()
-{
-     bool ret = false;
-
-     return ret;
+    return m_lcd;
 }
