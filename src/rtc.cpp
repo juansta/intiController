@@ -91,7 +91,7 @@ DateTime Rtc::now()
             if (i2c_rep_start(BQ32000_ADDRESS | READ))
             {
                 ss = Rtc::bcd2bin(i2c_read(false));
-                mm = Rtc::bcd2bin(i2c_read(false));
+                mm = Rtc::bcd2bin(i2c_read(false)) & 0x7F;
                 hh = Rtc::bcd2bin(i2c_read(false));
                 d  = Rtc::bcd2bin(i2c_read(false));
                 d  = Rtc::bcd2bin(i2c_read(false));
