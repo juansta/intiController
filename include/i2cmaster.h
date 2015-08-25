@@ -87,7 +87,7 @@ bool __attribute__ ((noinline)) i2c_write(uint8_t value) asm("ass_i2c_write");
 
 // Read one byte. If <last> is true, we send a NAK after having received
 // the byte in order to terminate the read sequence.
-uint8_t __attribute__ ((noinline)) i2c_read(bool last);
+uint8_t __attribute__ ((noinline)) i2c_read(bool last = true);
 
 // You can set I2C_CPUFREQ independently of F_CPU if you
 // change the CPU frequency on the fly. If do not define it,

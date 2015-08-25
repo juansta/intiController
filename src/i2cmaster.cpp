@@ -334,7 +334,7 @@ bool i2c_write(uint8_t value)
   return true; // fooling the compiler
 }
 
-uint8_t i2c_read(bool last = true)
+uint8_t i2c_read(bool last)
 {
   __asm__ __volatile__
     (
