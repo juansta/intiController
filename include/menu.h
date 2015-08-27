@@ -41,9 +41,7 @@ private:
     typedef event_ret (Menu::*menu_item)(event) ;
     menu_item m_currentMenu;
 
-    uint8_t   m_timeOut;
-
-    uint8_t increment(uint8_t value, int8_t inc, uint8_t max);
+    uint8_t   increment(uint8_t value, int8_t inc, uint8_t max);
 
     // display output
     Lcd m_lcd;
@@ -93,4 +91,8 @@ private:
     event_ret settingGMax();
     event_ret settingYMax();
     event_ret settingVMax();
+
+    // LCD timeout handling
+    uint8_t   m_timeOutLen; // timeout length in seconds before LCD is turned off
+    uint8_t   m_timeOut;
 };

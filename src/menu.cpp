@@ -31,7 +31,9 @@ void showrgb(Lcd& lcd, uint8_t offset, uint8_t*vals)
 }
 
 Menu::Menu()
-: m_currentMenu(&Menu::showSplash)
+: m_currentMenu(&Menu::showSplash),
+  m_timeOutLen (120),
+  m_timeOut    (0)
 {
     (this->*m_currentMenu)(FOCUS);
 }
