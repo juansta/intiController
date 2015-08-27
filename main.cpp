@@ -34,6 +34,7 @@ int main(void)
     Rtc    rtc;
     Menu   menu;
     Settings settings;
+    Timer   timer;
 
     clock_prescale_set(clock_div_1);
 
@@ -41,9 +42,16 @@ int main(void)
 
     while (1)
     {
-        // generate our one second tick
+        // check for one second tick
+        // this is used for user type interactions and
+        // is derived from the real time clock IRQ pulse
         if (rtc.tick())
             menu.process(Menu::TICK);
+
+        // check for our internal timer tick
+        // this is configured to be triggered
+        if (timer.tick())
+            menu.process(Menu::FAST_TICK);
 
         // check our rotary controller for any events
         Rotary::button btn = rotary.check();

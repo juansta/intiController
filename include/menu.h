@@ -21,7 +21,7 @@
 class Menu
 {
 public:
-    enum event {NOTHING = 0, FOCUS, TICK, CLICK, DOWN, UP};
+    enum event {NOTHING = 0, FOCUS, TICK, CLICK, DOWN, UP, FAST_TICK};
 
     Menu();
 
