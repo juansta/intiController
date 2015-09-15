@@ -24,6 +24,9 @@
 #include <rtc.h>
 #include <menu.h>
 #include <settings.h>
+#include <timer.h>
+#include <tkeeper.h>
+#include <dimmer.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
@@ -35,6 +38,7 @@ int main(void)
     Menu   menu;
     Settings settings;
     Timer   timer;
+    Dimmer  dimmer;
 
     clock_prescale_set(clock_div_1);
 
@@ -50,7 +54,7 @@ int main(void)
 
         // check for our internal timer tick
         // this is configured to be triggered
-        if (timer.tick())
+        if (timer.ticked())
             menu.process(Menu::FAST_TICK);
 
         // check our rotary controller for any events
