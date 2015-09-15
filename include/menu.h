@@ -57,6 +57,7 @@ private:
     event_ret setMimicZone(event);
     event_ret setLcd      (event);
     event_ret setTimeout  (event);
+    event_ret setBootloader(event);
     event_ret unitExit    (event);
 
     // menu items that appear under the "lights" heading

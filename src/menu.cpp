@@ -363,6 +363,44 @@ Menu::event_ret Menu::setTimeout(event newEvent)
             break;
 
         case UP:
+            m_currentMenu = &Menu::setBootloader;
+            ret = HANDLED;
+            break;
+
+        case NOTHING:
+        default:
+            ret = NOT_HANDLED;
+            break;
+    }
+     return ret;
+}
+Menu::event_ret Menu::setBootloader(event newEvent)
+{
+     event_ret ret = ERROR;
+
+    switch (newEvent)
+    {
+        case FOCUS:
+            m_lcd.clear();
+            m_lcd.write("Bootload");
+            ret = HANDLED;
+            break;
+
+        case TICK:
+            ret = HANDLED;
+            break;
+
+        case CLICK:
+            // reset program vector to DFU bootloader
+            ret = HANDLED;
+            break;
+
+        case DOWN:
+            m_currentMenu = &Menu::setTimeout;
+            ret = HANDLED;
+            break;
+
+        case UP:
             m_currentMenu = &Menu::unitExit;
             ret = HANDLED;
             break;
