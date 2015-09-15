@@ -7,6 +7,8 @@ include/menu.h
 include/rotary.h
 include/rtc.h
 include/timer.h
+include/tkeeper.h
+include/dimmer.h
 src/i2cmaster.cpp
 src/lcd.cpp
 src/menu.cpp
@@ -19,4 +21,6 @@ src/datetime.cpp
 include/eeprom.h
 src/eeprom.cpp
 src/settings.cpp
+src/tkeeper.cpp
+src/dimmer.cpp
 include/settings.h
