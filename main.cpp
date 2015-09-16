@@ -33,12 +33,12 @@
 
 int main(void)
 {
-    Rotary rotary;
-    Rtc    rtc;
-    Menu   menu;
+    Rotary   rotary;
+    Rtc      rtc;
+    Menu     menu;
     Settings settings;
-    Timer   timer;
-    Dimmer  dimmer;
+    Timer    timer;
+    Dimmer   dimmer;
 
     clock_prescale_set(clock_div_1);
 
