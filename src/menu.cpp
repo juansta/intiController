@@ -22,10 +22,10 @@
 #include <settings.h>
 
 
-void showrgb(Lcd& lcd, uint8_t offset, uint8_t*vals)
+void showrgb(Lcd& lcd, uint8_t offset, uint16_t*vals)
 {
     lcd.setCursor(1,0);
-    lcd.write("R - %2u G - %2u B - %2u", vals[0], vals[1], vals[2]);
+    lcd.write("R-%4u G-%4u B-%4u", vals[0], vals[1], vals[2]);
 
     lcd.setCursor(1, offset);
 }
@@ -307,7 +307,7 @@ Menu::event_ret Menu::setLcd (event newEvent)
             const Settings::Lcd lcd = setting.getLcd();
             m_lcd.clear();
             m_lcd.write("Set LCD Setting");
-            showrgb(m_lcd, 0, (uint8_t*)&lcd);
+            showrgb(m_lcd, 0, (uint16_t*)&lcd);
             ret = HANDLED;
             break;
         }
@@ -1089,12 +1089,12 @@ Menu::event_ret Menu::settingLcd(event newEvent)
 {
     static uint8_t loc       =  0;
            uint8_t offset[3] = {5,12,19};
-           uint8_t maxval    = 99;
+           uint8_t maxval    = 4096;
     event_ret ret = ERROR;
 
     static union
     {
-        uint8_t         bytes[3];
+        uint16_t        bytes[3];
         Settings::Lcd   values;
     } buffer;
 

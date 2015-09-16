@@ -29,21 +29,21 @@ class Settings
 public:
     struct Emitters
     {
-        uint8_t maxTotal;
-        uint8_t maxWhite;
-        uint8_t maxRoyalBlue;
-        uint8_t maxBlue;
-        uint8_t maxRed;
-        uint8_t maxGreen;
-        uint8_t maxYellow;
-        uint8_t maxViolet;
+        uint16_t maxTotal;
+        uint16_t maxWhite;
+        uint16_t maxRoyalBlue;
+        uint16_t maxBlue;
+        uint16_t maxRed;
+        uint16_t maxGreen;
+        uint16_t maxYellow;
+        uint16_t maxViolet;
     };
 
     struct Lcd
     {
-        uint8_t maxRed;
-        uint8_t maxGreen;
-        uint8_t maxBlue;
+        uint16_t maxRed;
+        uint16_t maxGreen;
+        uint16_t maxBlue;
     };
 
     Settings();
@@ -59,7 +59,7 @@ private:
     Lcd      m_lcd;
 
     static const uint8_t EMITTER_OFFSET = 0;
-    static const uint8_t LCD_OFFSET     = 8;
+    static const uint8_t LCD_OFFSET     = 16;
 
     Eeprom m_eeprom;
 };
