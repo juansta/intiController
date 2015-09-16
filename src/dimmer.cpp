@@ -26,6 +26,8 @@ Dimmer::Dimmer()
 
     write(MODE1, MODE1_AUTOINC);
     write(MODE2, MODE2_OCH | MODE2_LEDnHighZ);
+
+    setFrequency(200);
 }
 Dimmer::~Dimmer()
 {}
