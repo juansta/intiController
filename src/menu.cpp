@@ -912,7 +912,7 @@ Menu::event_ret Menu::statusExit(event newEvent)
 
     return ret;
 }
-uint8_t Menu::increment(uint8_t value, int8_t inc, uint8_t max)
+uint16_t Menu::increment(uint16_t value, int8_t inc, uint16_t max)
 {
     return (value + inc) % max;
 }
@@ -1089,7 +1089,7 @@ Menu::event_ret Menu::settingLcd(event newEvent)
 {
     static uint8_t loc       =  0;
            uint8_t offset[3] = {5,12,19};
-           uint8_t maxval    = 4096;
+           uint16_t maxval    = 4096;
     event_ret ret = ERROR;
 
     static union

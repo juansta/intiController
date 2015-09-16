@@ -23,16 +23,28 @@
 Dimmer::Dimmer()
 {
     i2c_init();
+    uint8_t mode1 = MODE1_AUTOINC;
+    uint8_t mode2 = MODE2_INVERT;
 
-    write(MODE1, MODE1_AUTOINC);
-    write(MODE2, MODE2_OCH | MODE2_LEDnHighZ);
+    write(MODE1, &mode1);
+    write(MODE2, &mode2);
 
-    setFrequency(200);
+    //setFrequency(100);
 }
 Dimmer::~Dimmer()
 {}
-void Dimmer::setLcd(uint16_t r, uint16_t g, uint16_t b)
-{}
+bool Dimmer::setLcd(const uint16_t * lcd)
+{
+    uint8_t * pcd     = (uint8_t*)lcd;
+    uint8_t   pwm[12] = {0, 0, pcd[0], pcd[1],
+                         0, 0, pcd[2], pcd[3],
+                         0, 0, pcd[4], pcd[5]};
+
+    // LCD PWM lines are on channels 14, 15 & 16 as Blue, Green & Red
+    bool ret = write(LED13_ON_L, pwm, 12);
+
+    return ret;
+}
 void Dimmer::setWhite(uint8_t w)
 {}
 void Dimmer::setRoyalBlue(uint8_t rb)
@@ -54,41 +66,49 @@ void Dimmer::setFrequency(float freq)
     prescaleval -= 1;
 
     uint8_t prescale = floor(prescaleval + 0.5);
+    uint8_t oldmode  = read(MODE1) | 0xA1;
+    uint8_t newmode  = (oldmode & 0x7F) | 0x10; // sleep
 
-    uint8_t oldmode = read(MODE1);
-    uint8_t newmode = (oldmode & 0x7F) | 0x10; // sleep
+    write(MODE1, &newmode);             // go to sleep
+    write(PCA9685_PRESCALE, &prescale); // set the prescaler
+    write(MODE1, &oldmode);
 
-    write(MODE1, newmode);             // go to sleep
-    write(PCA9685_PRESCALE, prescale); // set the prescaler
-    write(MODE1, oldmode);
+    delay_ms(1);
 
-    delay_ms(5);
-
-    write(MODE1, oldmode | 0xa1);
+    //write(MODE1, oldmode | 0xa1);
 }
 
 uint8_t Dimmer::read(uint8_t addr)
 {
     uint8_t ret = 0;
 
-    if (i2c_start(PCA9685 | READ))
+    if (i2c_start(PCA9685 | WRITE))
     {
-        if (i2c_rep_start(addr))
-            ret = i2c_read(true);
+        i2c_write(addr);
+        i2c_rep_start(PCA9685 | READ);
 
+        ret = i2c_read(true);
         i2c_stop();
     }
 
     return ret;
 }
 
-void Dimmer::write(uint8_t addr, uint8_t d)
+bool Dimmer::write(uint8_t addr, const uint8_t *values, uint8_t len)
 {
+    bool ret = false;
+
     if (i2c_start(PCA9685 | WRITE))
     {
+        uint8_t written = 0;
         i2c_write(addr);
-        i2c_write(d);
+        while (written < len && i2c_write(*values++))
+            written++;
 
         i2c_stop();
+
+        ret = (written == len);
     }
+
+    return ret;
 }

@@ -41,7 +41,7 @@ private:
     typedef event_ret (Menu::*menu_item)(event) ;
     menu_item m_currentMenu;
 
-    uint8_t   increment(uint8_t value, int8_t inc, uint8_t max);
+    uint16_t   increment(uint16_t value, int8_t inc, uint16_t max);
 
     // display output
     Lcd m_lcd;

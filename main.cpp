@@ -44,8 +44,11 @@ int main(void)
 
     sei();
 
-    while (1)
+    uint16_t vals[3] = {4094, 512, 512};
+
+    while (dimmer.setLcd(vals))
     {
+
         // check for one second tick
         // this is used for user type interactions and
         // is derived from the real time clock IRQ pulse

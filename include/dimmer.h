@@ -26,7 +26,7 @@ public:
     Dimmer();
     ~Dimmer();
 
-    void setLcd(uint16_t r, uint16_t g, uint16_t b);
+    bool setLcd(const uint16_t *lcd);
 
     void setWhite(uint8_t w);
     void setRoyalBlue(uint8_t rb);
@@ -63,7 +63,7 @@ private:
     static const uint8_t MODE2_LEDn1      = (1);
     static const uint8_t MODE2_LEDnHighZ  = (2);
 
-    static const uint8_t PCA9685_PRESCALE = 0x1E;
+    static const uint8_t PCA9685_PRESCALE = 0xFE;
 
     static const uint8_t LED0_ON_L  = 0x06;
     static const uint8_t LED0_ON_H  = 0x07;
@@ -154,6 +154,6 @@ private:
 
 
 
-    void    write(uint8_t addr, uint8_t d);
+    bool write(uint8_t addr, const uint8_t * values, uint8_t len = 1);
     uint8_t read (uint8_t addr);
 };
