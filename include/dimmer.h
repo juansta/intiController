@@ -70,6 +70,8 @@ private:
 
     // the actual channel we are operating as
     const uint8_t m_channel;
+    // offset used for our start time
+    const uint16_t m_offset;
 
     // indexes into required channel on and off registers
     const uint8_t ON_L;

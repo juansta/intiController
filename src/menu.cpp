@@ -63,7 +63,10 @@ bool Menu::process(event newEvent)
         if (m_timeOut < m_timeOutLen)
             m_timeOut++;
         else
+        {
             m_lcd.backlight_off();
+            m_currentMenu = &Menu::showSplash;
+        }
         break;
 
     default:

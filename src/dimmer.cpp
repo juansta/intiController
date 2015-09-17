@@ -22,6 +22,7 @@
 
 Dimmer::Dimmer(uint8_t channel)
     : m_channel(channel),
+      m_offset (channel * 256),
       ON_L (channel * 4 + LED_ON_L),
       ON_H (channel * 4 + LED_ON_H),
       OFF_L(channel * 4 + LED_OFF_L),
@@ -40,11 +41,14 @@ Dimmer::~Dimmer()
 {}
 bool Dimmer::setLevel(uint16_t value)
 {
-    // The following lines are disabled until we start to control
-    // when the lights should be turned "on"
-    // currently this is assumed to be always zero
-    uint8_t * pcd    = (uint8_t*)&value;
-    uint8_t   pwm[4] = {0, 0, pcd[0], pcd[1]};
+    // our ON values are always offset depending on channel
+    // this ensures that all channels at least turn ON at different
+    // times, reducing inrush requirements
+    uint16_t  offset = (value + m_offset) % 4096;
+    uint8_t * poff   = (uint8_t*)&offset;
+    uint8_t * pon    = (uint8_t*)&m_offset;
+    uint8_t   pwm[4] = {pon[0], pon[1], poff[0], poff[1]};
+
     bool ret = write(ON_L, pwm, 4);
 
     if (ret)
