@@ -54,12 +54,18 @@ public:
 
     bool setLcd(const Lcd &values);
     const Lcd & getLcd();
+
+    bool setLcdTimeout(uint8_t timeout);
+    const uint8_t & getLcdTimeout();
+
 private:
     Emitters m_emitters;
     Lcd      m_lcd;
+    uint8_t  m_lcdTimeout;
 
     static const uint8_t EMITTER_OFFSET = 0;
     static const uint8_t LCD_OFFSET     = 16;
+    static const uint8_t LCD_TO_OFFSET  = 22;
 
     Eeprom m_eeprom;
 };

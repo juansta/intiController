@@ -22,6 +22,7 @@ Settings::Settings()
 {
     m_eeprom.readBlock(EMITTER_OFFSET, m_emitters);
     m_eeprom.readBlock(LCD_OFFSET, m_lcd);
+    m_eeprom.readBlock(LCD_TO_OFFSET, m_lcdTimeout);
 }
 Settings::~Settings()
 {}
@@ -59,4 +60,21 @@ bool Settings::setLcd(const Lcd& values)
 const Settings::Lcd & Settings::getLcd()
 {
     return m_lcd;
+}
+bool Settings::setLcdTimeout(uint8_t timeout)
+{
+    bool ret = false;
+    uint8_t size = m_eeprom.writeBlock(LCD_TO_OFFSET, timeout);
+
+    if (size == sizeof(m_lcdTimeout))
+    {
+        m_lcdTimeout = timeout;
+        ret = true;
+    }
+
+    return ret;
+}
+const uint8_t & Settings::getLcdTimeout()
+{
+    return m_lcdTimeout;
 }

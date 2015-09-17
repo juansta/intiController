@@ -43,11 +43,9 @@ bool Dimmer::setLevel(uint16_t value)
     // The following lines are disabled until we start to control
     // when the lights should be turned "on"
     // currently this is assumed to be always zero
-    //uint8_t * pcd    = (uint8_t*)&value;
-    //uint8_t   pwm[4] = {0, 0, pcd[0], pcd[1]};
-    //bool ret = write(ON_L, pwm, 4);
-
-    bool ret = write(OFF_L, (uint8_t*)&value, 2);
+    uint8_t * pcd    = (uint8_t*)&value;
+    uint8_t   pwm[4] = {0, 0, pcd[0], pcd[1]};
+    bool ret = write(ON_L, pwm, 4);
 
     if (ret)
         m_value = value;

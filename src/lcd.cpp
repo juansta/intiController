@@ -46,7 +46,11 @@ Lcd::Lcd()
     m_charDelay    (CHAR_DELAY),
     m_red          (13),
     m_green        (14),
-    m_blue         (15)
+    m_blue         (15),
+    m_oldRed       (0),
+    m_oldGreen     (0),
+    m_oldBlue      (0),
+    m_blon         (true)
 {
     init();
 }
@@ -215,17 +219,29 @@ void Lcd::load_custom_character (uint8_t char_num, uint8_t *rows)
 
 void Lcd::backlight_off()
 {
-    /// need to set some limits
-    m_red  .setLevel(0);
-    m_green.setLevel(0);
-    m_blue .setLevel(0);
+    if (m_blon)
+    {
+        m_oldRed   = m_red;
+        m_oldGreen = m_green;
+        m_oldBlue  = m_blue;
+
+        // store values for restore
+        m_red  .setLevel(0);
+        m_green.setLevel(0);
+        m_blue .setLevel(0);
+
+        m_blon = false;
+    }
 }
 void Lcd::backlight_on()
 {
-    /// need to set some limits
-    m_red  .setLevel(m_red);
-    m_green.setLevel(m_green);
-    m_blue .setLevel(m_blue);
+    // just restore previous values
+    m_red  .setLevel(m_oldRed);
+    m_green.setLevel(m_oldGreen);
+    m_blue .setLevel(m_oldBlue);
+
+    m_blon = true;
+
 }
 void Lcd::getRgb(uint16_t&red, uint16_t&green, uint16_t&blue)
 {
@@ -235,10 +251,11 @@ void Lcd::getRgb(uint16_t&red, uint16_t&green, uint16_t&blue)
 }
 void Lcd::setRgb(uint16_t &red, uint16_t &green, uint16_t &blue)
 {
-    // configure HW PWM
-    m_red  .setLevel(red);
-    m_green.setLevel(green);
-    m_blue .setLevel(blue);
+    m_oldRed   = red;
+    m_oldGreen = green;
+    m_oldBlue  = blue;
+
+    backlight_on();
 }
 
 void Lcd::setContrast(uint8_t new_val)

@@ -36,6 +36,11 @@ Menu::Menu()
   m_timeOut    (0)
 {
     (this->*m_currentMenu)(FOCUS);
+
+    Settings setting;
+    Settings::Lcd lcd = setting.getLcd();
+    m_lcd.setRgb(lcd.maxRed, lcd.maxGreen, lcd.maxBlue);
+    m_timeOutLen = setting.getLcdTimeout();
 }
 
 bool Menu::process(event newEvent)
@@ -43,6 +48,27 @@ bool Menu::process(event newEvent)
     bool ret = false;
     menu_item old_menu = m_currentMenu;
     event_ret result = (this->*m_currentMenu)(newEvent);
+
+    // check if event was due to user interaction
+    switch (newEvent)
+    {
+    case DOWN:
+    case UP:
+    case CLICK:
+        m_timeOut = 0;
+        m_lcd.backlight_on();
+        break;
+
+    case TICK:
+        if (m_timeOut < m_timeOutLen)
+            m_timeOut++;
+        else
+            m_lcd.backlight_off();
+        break;
+
+    default:
+        break;
+    }
 
     if (m_currentMenu != old_menu)
         ret = process(FOCUS);
@@ -58,17 +84,6 @@ bool Menu::process(event newEvent)
             ret = true;
             break;
         }
-
-        // check if event was due to user interaction
-        if (newEvent == DOWN || newEvent == UP || newEvent == CLICK)
-            m_timeOut = 0;
-        else if (newEvent == TICK)
-            m_timeOut++;
-
-        if (m_timeOut > m_timeOutLen)
-            m_lcd.backlight_off();
-        else
-            m_lcd.backlight_on();
     }
 
     return ret;
@@ -365,6 +380,7 @@ Menu::event_ret Menu::setTimeout(event newEvent)
             break;
 
         case CLICK:
+            m_currentMenu = &Menu::settingTimeout;
             ret = HANDLED;
             break;
 
@@ -1137,21 +1153,25 @@ Menu::event_ret Menu::settingLcd(event newEvent)
             {
                 Settings settings;
                 settings.setLcd(buffer.values);
+                m_lcd.setRgb(buffer.values.maxRed, buffer.values.maxGreen, buffer.values.maxBlue);
                 m_lcd.blink_off();
+
                 m_currentMenu = &Menu::setLcd;
             }
             ret = HANDLED;
             break;
 
         case DOWN:
-            buffer.bytes[loc] = increment(buffer.bytes[loc],-1, maxval);
+            buffer.bytes[loc] = increment(buffer.bytes[loc],-10, maxval);
             showrgb(m_lcd, offset[loc], buffer.bytes);
+            m_lcd.setRgb(buffer.values.maxRed, buffer.values.maxGreen, buffer.values.maxBlue);
             ret = HANDLED;
             break;
 
         case UP:
-            buffer.bytes[loc] = increment(buffer.bytes[loc], 1, maxval);
+            buffer.bytes[loc] = increment(buffer.bytes[loc], 10, maxval);
             showrgb(m_lcd, offset[loc], buffer.bytes);
+            m_lcd.setRgb(buffer.values.maxRed, buffer.values.maxGreen, buffer.values.maxBlue);
             ret = HANDLED;
             break;
 
@@ -1165,27 +1185,42 @@ Menu::event_ret Menu::settingLcd(event newEvent)
 }
 Menu::event_ret Menu::settingTimeout(event newEvent)
 {
+           uint16_t maxval = 240;
     event_ret ret = ERROR;
 
     switch (newEvent)
     {
         case FOCUS:
+        {
+            m_lcd.clear();
+            m_lcd.write("LCD Timeout\n%d seconds", m_timeOutLen);
             ret = HANDLED;
             break;
-
+        }
         case TICK:
             ret = HANDLED;
             break;
 
         case CLICK:
-            ret = HANDLED;
+            {
+                Settings setting;
+                setting.setLcdTimeout(m_timeOutLen);
+                m_currentMenu = &Menu::setTimeout;
+                ret = HANDLED;
+            }
             break;
 
         case DOWN:
+            m_timeOutLen = increment(m_timeOutLen, -1, maxval);
+            m_lcd.clear();
+            m_lcd.write("LCD Timeout\n%d seconds", m_timeOutLen);
             ret = HANDLED;
             break;
 
         case UP:
+            m_timeOutLen = increment(m_timeOutLen, 1, maxval);
+            m_lcd.clear();
+            m_lcd.write("LCD Timeout\n%d seconds", m_timeOutLen);
             ret = HANDLED;
             break;
 

@@ -112,4 +112,10 @@ private:
     Dimmer m_red;
     Dimmer m_green;
     Dimmer m_blue;
+
+    uint16_t    m_oldRed;
+    uint16_t    m_oldGreen;
+    uint16_t    m_oldBlue;
+
+    bool m_blon;
 };

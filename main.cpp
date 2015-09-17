@@ -36,7 +36,6 @@ int main(void)
     Rotary   rotary;
     Rtc      rtc;
     Menu     menu;
-    Settings settings;
     Timer    timer;
 
     clock_prescale_set(clock_div_1);
