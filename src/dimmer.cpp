@@ -20,43 +20,41 @@
 #include <dimmer.h>
 #include <i2cmaster.h>
 
-Dimmer::Dimmer()
+Dimmer::Dimmer(uint8_t channel)
+    : m_channel(channel),
+      ON_L (channel * 4 + LED_ON_L),
+      ON_H (channel * 4 + LED_ON_H),
+      OFF_L(channel * 4 + LED_OFF_L),
+      OFF_H(channel * 4 + LED_OFF_H),
+      m_value(0)
 {
     i2c_init();
+
     uint8_t mode1 = MODE1_AUTOINC;
     uint8_t mode2 = MODE2_INVERT;
 
     write(MODE1, &mode1);
     write(MODE2, &mode2);
-
-    //setFrequency(100);
 }
 Dimmer::~Dimmer()
 {}
-bool Dimmer::setLcd(const uint16_t * lcd)
+bool Dimmer::setLevel(uint16_t value)
 {
-    uint8_t * pcd     = (uint8_t*)lcd;
-    uint8_t   pwm[12] = {0, 0, pcd[0], pcd[1],
-                         0, 0, pcd[2], pcd[3],
-                         0, 0, pcd[4], pcd[5]};
+    // The following lines are disabled until we start to control
+    // when the lights should be turned "on"
+    // currently this is assumed to be always zero
+    //uint8_t * pcd    = (uint8_t*)&value;
+    //uint8_t   pwm[4] = {0, 0, pcd[0], pcd[1]};
+    //bool ret = write(ON_L, pwm, 4);
 
-    // LCD PWM lines are on channels 14, 15 & 16 as Blue, Green & Red
-    bool ret = write(LED13_ON_L, pwm, 12);
+    bool ret = write(OFF_L, (uint8_t*)&value, 2);
+
+    if (ret)
+        m_value = value;
 
     return ret;
 }
-void Dimmer::setWhite(uint8_t w)
-{}
-void Dimmer::setRoyalBlue(uint8_t rb)
-{}
-void Dimmer::setBlue(uint8_t b)
-{}
-void Dimmer::setGreen(uint8_t w)
-{}
-void Dimmer::setRed(uint8_t w)
-{}
-void Dimmer::setYellow(uint8_t w)
-{}
+
 void Dimmer::setFrequency(float freq)
 {
     float prescaleval = 25000000;

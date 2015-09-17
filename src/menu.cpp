@@ -58,6 +58,17 @@ bool Menu::process(event newEvent)
             ret = true;
             break;
         }
+
+        // check if event was due to user interaction
+        if (newEvent == DOWN || newEvent == UP || newEvent == CLICK)
+            m_timeOut = 0;
+        else if (newEvent == TICK)
+            m_timeOut++;
+
+        if (m_timeOut > m_timeOutLen)
+            m_lcd.backlight_off();
+        else
+            m_lcd.backlight_on();
     }
 
     return ret;

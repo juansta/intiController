@@ -23,17 +23,15 @@
 class Dimmer
 {
 public:
-    Dimmer();
+    Dimmer (uint8_t channel);
     ~Dimmer();
 
-    bool setLcd(const uint16_t *lcd);
+    bool setLevel(uint16_t value);
 
-    void setWhite(uint8_t w);
-    void setRoyalBlue(uint8_t rb);
-    void setBlue(uint8_t b);
-    void setGreen(uint8_t w);
-    void setRed(uint8_t w);
-    void setYellow(uint8_t w);
+    operator uint16_t()
+    {
+        return m_value;
+    }
 
 private:
     static const uint8_t PCA9685         = 0x80;
@@ -65,95 +63,26 @@ private:
 
     static const uint8_t PCA9685_PRESCALE = 0xFE;
 
-    static const uint8_t LED0_ON_L  = 0x06;
-    static const uint8_t LED0_ON_H  = 0x07;
-    static const uint8_t LED0_OFF_L = 0x08;
-    static const uint8_t LED0_OFF_H = 0x09;
+    static const uint8_t LED_ON_L  = 0x06;
+    static const uint8_t LED_ON_H  = 0x07;
+    static const uint8_t LED_OFF_L = 0x08;
+    static const uint8_t LED_OFF_H = 0x09;
 
-    static const uint8_t LED1_ON_L  = 0x0A;
-    static const uint8_t LED1_ON_H  = 0x0B;
-    static const uint8_t LED1_OFF_L = 0x0C;
-    static const uint8_t LED1_OFF_H = 0x0D;
+    // the actual channel we are operating as
+    const uint8_t m_channel;
 
-    static const uint8_t LED2_ON_L  = 0x0E;
-    static const uint8_t LED2_ON_H  = 0x0F;
-    static const uint8_t LED2_OFF_L = 0x10;
-    static const uint8_t LED2_OFF_H = 0x11;
-
-    static const uint8_t LED3_ON_L  = 0x12;
-    static const uint8_t LED3_ON_H  = 0x13;
-    static const uint8_t LED3_OFF_L = 0x14;
-    static const uint8_t LED3_OFF_H = 0x15;
-
-    static const uint8_t LED4_ON_L  = 0x16;
-    static const uint8_t LED4_ON_H  = 0x17;
-    static const uint8_t LED4_OFF_L = 0x18;
-    static const uint8_t LED4_OFF_H = 0x19;
-
-    static const uint8_t LED5_ON_L  = 0x1A;
-    static const uint8_t LED5_ON_H  = 0x1B;
-    static const uint8_t LED5_OFF_L = 0x1C;
-    static const uint8_t LED5_OFF_H = 0x1D;
-
-    static const uint8_t LED6_ON_L  = 0x1E;
-    static const uint8_t LED6_ON_H  = 0x1F;
-    static const uint8_t LED6_OFF_L = 0x20;
-    static const uint8_t LED6_OFF_H = 0x21;
-
-    static const uint8_t LED7_ON_L  = 0x22;
-    static const uint8_t LED7_ON_H  = 0x23;
-    static const uint8_t LED7_OFF_L = 0x24;
-    static const uint8_t LED7_OFF_H = 0x25;
-
-    static const uint8_t LED8_ON_L  = 0x26;
-    static const uint8_t LED8_ON_H  = 0x27;
-    static const uint8_t LED8_OFF_L = 0x28;
-    static const uint8_t LED8_OFF_H = 0x29;
-
-    static const uint8_t LED9_ON_L  = 0x2A;
-    static const uint8_t LED9_ON_H  = 0x2B;
-    static const uint8_t LED9_OFF_L = 0x2C;
-    static const uint8_t LED9_OFF_H = 0x2D;
-
-    static const uint8_t LED10_ON_L  = 0x2E;
-    static const uint8_t LED10_ON_H  = 0x2F;
-    static const uint8_t LED10_OFF_L = 0x30;
-    static const uint8_t LED10_OFF_H = 0x31;
-
-    static const uint8_t LED11_ON_L  = 0x32;
-    static const uint8_t LED11_ON_H  = 0x33;
-    static const uint8_t LED11_OFF_L = 0x34;
-    static const uint8_t LED11_OFF_H = 0x35;
-
-    static const uint8_t LED12_ON_L  = 0x36;
-    static const uint8_t LED12_ON_H  = 0x37;
-    static const uint8_t LED12_OFF_L = 0x38;
-    static const uint8_t LED12_OFF_H = 0x39;
-
-    static const uint8_t LED13_ON_L  = 0x3A;
-    static const uint8_t LED13_ON_H  = 0x3B;
-    static const uint8_t LED13_OFF_L = 0x3C;
-    static const uint8_t LED13_OFF_H = 0x3D;
-
-    static const uint8_t LED14_ON_L  = 0x3E;
-    static const uint8_t LED14_ON_H  = 0x3F;
-    static const uint8_t LED14_OFF_L = 0x40;
-    static const uint8_t LED14_OFF_H = 0x41;
-
-    static const uint8_t LED15_ON_L  = 0x42;
-    static const uint8_t LED15_ON_H  = 0x43;
-    static const uint8_t LED15_OFF_L = 0x44;
-    static const uint8_t LED15_OFF_H = 0x45;
-
-    static const uint8_t ALLLED_ON_L  = 0xFA;
-    static const uint8_t ALLLED_ON_H  = 0xFB;
-    static const uint8_t ALLLED_OFF_L = 0xFC;
-    static const uint8_t ALLLED_OFF_H = 0xFD;
+    // indexes into required channel on and off registers
+    const uint8_t ON_L;
+    const uint8_t ON_H;
+    const uint8_t OFF_L;
+    const uint8_t OFF_H;
 
     void setFrequency(float freq);
 
-
-
-    bool write(uint8_t addr, const uint8_t * values, uint8_t len = 1);
+    bool    write(uint8_t addr, const uint8_t * values, uint8_t len = 1);
     uint8_t read (uint8_t addr);
+
+    // last known set value
+    // this can be anything between 0 and 4095
+    uint16_t m_value;
 };

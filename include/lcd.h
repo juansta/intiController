@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
+#include <dimmer.h>
 
 class Lcd
 {
@@ -58,8 +59,8 @@ public:
     void backlight_on();
     void backlight_off();
 
-    void getRgb(uint8_t&red, uint8_t&green, uint8_t&blue);
-    void setRgb(uint8_t, uint8_t, uint8_t);
+    void getRgb(uint16_t &red, uint16_t &green, uint16_t &blue);
+    void setRgb(uint16_t &red, uint16_t &green, uint16_t &blue);
 
     void setContrast(uint8_t new_val);
 
@@ -85,10 +86,6 @@ private:
     int     m_cmdDelay;
     int     m_charDelay;
 
-    uint8_t m_red;
-    uint8_t m_green;
-    uint8_t m_blue;
-
     // Class private constants and definition
     static const int     CMD_DELAY           = 1;  // Command delay in miliseconds
     static const int     CHAR_DELAY          = 0;  // Delay between characters in miliseconds
@@ -110,4 +107,9 @@ private:
     // LCD bitmap definition
     static const uint8_t CURSOR_ON_BIT  = ( 1 << 1 );// Cursor selection bit in Display on cmd.
     static const uint8_t BLINK_ON_BIT   = ( 1 << 0 );// Blink selection bit on Display on cmd.
+
+    // LCD backlight controllers
+    Dimmer m_red;
+    Dimmer m_green;
+    Dimmer m_blue;
 };

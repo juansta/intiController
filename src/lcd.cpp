@@ -44,9 +44,9 @@ Lcd::Lcd()
     m_i2cAddress   (0x78),
     m_cmdDelay     (CMD_DELAY),
     m_charDelay    (CHAR_DELAY),
-    m_red          (0),
-    m_green        (0),
-    m_blue         (0)
+    m_red          (13),
+    m_green        (14),
+    m_blue         (15)
 {
     init();
 }
@@ -213,21 +213,32 @@ void Lcd::load_custom_character (uint8_t char_num, uint8_t *rows)
     }
 }
 
-void Lcd::backlight_on()
-{}
 void Lcd::backlight_off()
-{}
-void Lcd::getRgb(uint8_t&red, uint8_t&green, uint8_t&blue)
+{
+    /// need to set some limits
+    m_red  .setLevel(0);
+    m_green.setLevel(0);
+    m_blue .setLevel(0);
+}
+void Lcd::backlight_on()
+{
+    /// need to set some limits
+    m_red  .setLevel(m_red);
+    m_green.setLevel(m_green);
+    m_blue .setLevel(m_blue);
+}
+void Lcd::getRgb(uint16_t&red, uint16_t&green, uint16_t&blue)
 {
     red   = m_red;
     green = m_green;
     blue  = m_blue;
 }
-void Lcd::setRgb(uint8_t r,uint8_t g,uint8_t b)
+void Lcd::setRgb(uint16_t &red, uint16_t &green, uint16_t &blue)
 {
     // configure HW PWM
-
-    // store new values to eeprom
+    m_red  .setLevel(red);
+    m_green.setLevel(green);
+    m_blue .setLevel(blue);
 }
 
 void Lcd::setContrast(uint8_t new_val)

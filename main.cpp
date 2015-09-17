@@ -38,15 +38,12 @@ int main(void)
     Menu     menu;
     Settings settings;
     Timer    timer;
-    Dimmer   dimmer;
 
     clock_prescale_set(clock_div_1);
 
     sei();
 
-    uint16_t vals[3] = {4094, 512, 512};
-
-    while (dimmer.setLcd(vals))
+    while (1)
     {
 
         // check for one second tick
