@@ -6,10 +6,7 @@ const float TKeeper::MOON_PERIOD = 29.530588853f;
 TKeeper::TKeeper(TKeeper::location & loc, int tz)
     : m_location(loc), m_tz(tz)
 {
-    // latitude=27.0;
-    // longitude=-82.0;
-    // timezone=-300;
-    DstRules(3,2,11,1, 60); // USA
+    setDstRules(3, 2, 11, 1, 60);
 }
 
 bool TKeeper::setTimezone(int & tz)
@@ -24,7 +21,7 @@ bool TKeeper::setTimezone(int & tz)
 
 bool TKeeper::setLocation(location & loc)
 {
-    bool ret = (fabs(lon) < 180.0) && (fabs(lat) < 90.0);
+    bool ret = (fabs(loc.longitude) < 180.0) && (fabs(loc.latitude) < 90.0);
 
     if (ret)
         m_location = loc;
@@ -34,9 +31,10 @@ bool TKeeper::setLocation(location & loc)
 
 bool TKeeper::setDstRules(uint8_t sm, uint8_t sw, uint8_t em, uint8_t ew, uint8_t adv)
 {
-    if (sm==0 :call <SNR>119_align() a | sw==0 || em==0 || ew==0)
+    if (sm == 0 || sw == 0 || em == 0 || ew == 0)
         return false;
-    if(sm>12 || sw>4 || em>12 || ew>4)
+
+    if (sm > 12 || sw > 4 || em > 12 || ew > 4)
         return false;
 
     dstm1  = sm;
@@ -50,7 +48,7 @@ bool TKeeper::setDstRules(uint8_t sm, uint8_t sw, uint8_t em, uint8_t ew, uint8_
 
 void TKeeper::GMT(uint8_t * now)
 {
-    Adjust(now, -timezone);
+    Adjust(now, -m_tz);
 }
 
 void TKeeper::DST(uint8_t *now)
@@ -73,8 +71,7 @@ float TKeeper::MoonPhase(uint8_t * when)
 {
     // we compute the number of days since Jan 6, 2000
     // at which time the moon was 'new'
-
-    long  d = DayNumber(2000 + when[tl_year], when[tl_month], when[tl_day]) - DayNumber(2000, 1, 6);
+    long  d = DayNumber(2000 + when[YEAR], when[MONTH], when[DAY]) - DayNumber(2000, 1, 6);
     float p = d / MOON_PERIOD;
 
     d  = p;
@@ -108,10 +105,10 @@ void TKeeper::Sidereal(uint8_t * when, bool local)
     GMT(when);
 
     // Get number of days since our epoch of Jan 1, 2000
-    d = DayNumber(when[tl_year] + 2000, when[tl_month], when[tl_day]) - DayNumber(2000, 1, 1);
+    d = DayNumber(when[YEAR] + 2000, when[MONTH], when[DAY]) - DayNumber(2000, 1, 1);
 
     // compute calendar seconds since the epoch
-    second = d * 86400LL + when[tl_hour] * 3600LL + when[tl_minute] * 60LL + when[tl_second];
+    second = d * 86400LL + when[HOUR] * 3600LL + when[MINUTE] * 60LL + when[SECOND];
 
     // multiply by ratio of calendar to sidereal time
     second *= 1002737909LL;
@@ -123,7 +120,7 @@ void TKeeper::Sidereal(uint8_t * when, bool local)
     // convert from gmt to local
     if (local)
     {
-        d = 240.0 * longitude;
+        d = 240.0 * m_location.longitude;
         second += d;
     }
 
@@ -134,74 +131,18 @@ void TKeeper::Sidereal(uint8_t * when, bool local)
     minute = second / 60LL;
     d = minute * 60LL;
 
-    when[tl_second] = second - d;
-    when[tl_hour]   = 0;
-    when[tl_minute] = 0;
+    when[SECOND] = second - d;
+    when[HOUR]   = 0;
+    when[MINUTE] = 0;
 
     Adjust(when, minute);
 }
 
-uint8_t TKeeper::getSeason(uint8_t * when)
-{
-    if (when[tl_month] < 3)
-        return 0;       // winter
-
-    if(when[tl_month] == 3)
-    {
-        if(when[tl_day] < 22)
-            return 0;   // winter
-
-        return 1;       // spring
-    }
-
-    if (when[tl_month] < 6)
-        return 1;       // spring
-
-    if (when[tl_month] == 6)
-    {
-        if (when[tl_day] < 21)
-            return 1;   // spring
-
-        return 2;       // summer
-    }
-
-    if (when[tl_month] < 9)
-        return 2;       // summer
-
-    if (when[tl_month] == 9)
-    {
-        if (when[tl_day] < 22)
-            return 2;   // summer
-
-        return 3;       // fall
-    }
-
-    if (when[tl_month] < 12)
-        return 3;       // summer
-
-    if (when[tl_day] < 21)
-        return 3;       // summer
-
-    return 0;           // winter
-
-}
-
-uint8_t TKeeper::Season(uint8_t * when)
-{
-    uint8_t result = getSeason(when);
-
-    if (latitude < 0.0)
-        result = (result + 2) % 4;
-
-    return result;
-
-}
-
 uint8_t TKeeper::DayOfWeek(uint8_t * when)
 {
-    int      year  = when[tl_year] + 2000;
-    uint8_t  month = when[tl_month];
-    uint8_t  day   = when[tl_day];
+    int      year  = when[YEAR] + 2000;
+    uint8_t  month = when[MONTH];
+    uint8_t  day   = when[DAY];
 
     if (month < 3)
     {
@@ -217,8 +158,8 @@ uint8_t TKeeper::DayOfWeek(uint8_t * when)
 
 uint8_t TKeeper::LengthOfMonth(uint8_t * when)
 {
-    int     yr   = when[tl_year] + 2000;
-    uint8_t mnth = when[tl_month];
+    int     yr   = when[YEAR] + 2000;
+    uint8_t mnth = when[MONTH];
 
     if (mnth == 2)
     {
@@ -240,8 +181,7 @@ uint8_t TKeeper::LengthOfMonth(uint8_t * when)
 
 bool TKeeper::IsLeapYear(int yr)
 {
-    return ((yr % 4 == 0 && yr % 100 != 0) :call <SNR>119_align()
-            a| yr % 400 == 0);
+    return ( (yr % 4 == 0 && yr % 100 != 0) || yr % 400 == 0);
 }
 
 bool TKeeper::InDst(uint8_t * p)
@@ -249,32 +189,32 @@ bool TKeeper::InDst(uint8_t * p)
     // input is assumed to be standard time
     char nSundays, prevSunday, weekday;
 
-    if(p[tl_month]<dstm1 || p[tl_month]>dstm2) return false;
-    if(p[tl_month]>dstm1 && p[tl_month]<dstm2) return true;
+    if(p[MONTH]<dstm1 || p[MONTH]>dstm2) return false;
+    if(p[MONTH]>dstm1 && p[MONTH]<dstm2) return true;
 
     // if we get here, we are in either the start or end month
 
     // How many sundays so far this month?
     weekday=DayOfWeek(p);
     nSundays=0;
-    prevSunday=p[tl_day]-weekday+1;
+    prevSunday=p[DAY]-weekday+1;
     if(prevSunday>0){
         nSundays=prevSunday/7;
         nSundays++;
     }
 
-    if(p[tl_month]==dstm1){
+    if(p[MONTH]==dstm1){
         if(nSundays<dstw1) return false;
         if(nSundays>dstw1) return true;
         if(weekday>1) return true;
-        if(p[tl_hour]>1) return true;
+        if(p[HOUR]>1) return true;
         return false;
     }
 
     if(nSundays<dstw2) return true;
     if(nSundays>dstw2) return false;
     if(weekday>1) return false;
-    if(p[tl_hour]>1) return false;
+    if(p[HOUR]>1) return false;
     return true;
 }
 
@@ -282,112 +222,122 @@ bool TKeeper::InDst(uint8_t * p)
 //====Utility====================
 
 // rather than import yet another library, we define sgn and abs ourselves
-char TKeeper::Signum(int n){
-    if(n<0) return -1;
+char TKeeper::Signum(int n)
+{
+    if (n < 0)
+        return -1;
+
     return 1;
 }
 
-int TKeeper::Absolute(int n){
-    if(n<0) return 0-n;
+int TKeeper::Absolute(int n)
+{
+    if (n < 0)
+        return 0 - n;
+
     return n;
 }
 
-void TKeeper::Adjust(uint8_t * when, long offset){
+void TKeeper::Adjust(uint8_t * when, long offset)
+{
     long tmp, mod, nxt;
 
     // offset is in minutes
-    tmp=when[tl_minute]+offset; // minutes
+    tmp=when[MINUTE]+offset; // minutes
     nxt=tmp/60;// hours
     mod=Absolute(tmp) % 60;
     mod=mod*Signum(tmp)+60;
     mod %= 60;
-    when[tl_minute]=mod;
+    when[MINUTE]=mod;
 
-    tmp=nxt+when[tl_hour];
+    tmp=nxt+when[HOUR];
     nxt=tmp/24;// days
     mod=Absolute(tmp) % 24;
     mod=mod*Signum(tmp)+24;
     mod %= 24;
-    when[tl_hour]=mod;
+    when[HOUR]=mod;
 
-    tmp=nxt+when[tl_day];
+    tmp=nxt+when[DAY];
     mod=LengthOfMonth(when);
 
     if(tmp>mod){
         tmp-=mod;
-        when[tl_day]=tmp+1;
-        when[tl_month]++;
+        when[DAY]=tmp+1;
+        when[MONTH]++;
     }
     if(tmp<1){
-        when[tl_month]--;
+        when[MONTH]--;
         mod=LengthOfMonth(when);
-        when[tl_day]=tmp+mod;
+        when[DAY]=tmp+mod;
     }
 
-    tmp=when[tl_year];
-    if(when[tl_month]==0){
-        when[tl_month]=12;
+    tmp=when[YEAR];
+    if(when[MONTH]==0){
+        when[MONTH]=12;
         tmp--;
     }
-    if(when[tl_month]>12){
-        when[tl_month]=1;
+    if(when[MONTH]>12){
+        when[MONTH]=1;
         tmp++;
     }
     tmp+=100;
     tmp %= 100;
-    when[tl_year]=tmp;
+    when[YEAR]=tmp;
 
 }
 
-bool TKeeper::ComputeSun(uint8_t * when, bool rs) {
-    uint8_t  month, day;
-    float y, decl, eqt, ha, lon, lat, z;
-    uint8_t a;
-    int doy, minutes;
+bool TKeeper::ComputeSun(uint8_t * when, bool rs)
+{
+    float z;
+    int doy;
 
-    month=when[tl_month]-1;
-    day=when[tl_day]-1;
-    lon=-longitude/57.295779513082322;
-    lat=latitude/57.295779513082322;
+    uint8_t month = when[MONTH] - 1;
+    uint8_t day   = when[DAY] - 1;
 
+    float lon = -m_location.longitude / 57.295779513082322;
+    float lat =  m_location.latitude  / 57.295779513082322;
 
     //approximate hour;
-    a=6;
-    if(rs) a=18;
+    uint8_t a = (rs) ? 18 : 6;
 
     // approximate day of year
-    y= month * 30.4375 + day  + a/24.0; // 0... 365
+    // between 0 and 365
+    float y = month * 30.4375 + day  + a / 24.0;
 
     // compute fractional year
-    y *= 1.718771839885e-02; // 0... 1
+    // 0... 1
+    y *= 1.718771839885e-02;
 
     // compute equation of time... .43068174
-    eqt=229.18 * (0.000075+0.001868*cos(y)  -0.032077*sin(y) -0.014615*cos(y*2) -0.040849*sin(y* 2) );
+    float eqt  = 229.18 * (0.000075 + 0.001868 * cos(y) - 0.032077 * sin(y) - 0.014615 * cos(y * 2) - 0.040849 * sin(y * 2));
 
     // compute solar declination... -0.398272
-    decl=0.006918-0.399912*cos(y)+0.070257*sin(y)-0.006758*cos(y*2)+0.000907*sin(y*2)-0.002697*cos(y*3)+0.00148*sin(y*3);
+    float decl = 0.006918  -0.399912 * cos(y) + 0.070257 * sin(y) - 0.006758 * cos(y * 2) + 0.000907 * sin(y * 2) - 0.002697 * cos(y * 3) + 0.00148 * sin(y * 3);
 
-    //compute hour angle
-    ha=(  cos(1.585340737228125) / (cos(lat)*cos(decl)) -tan(lat) * tan(decl)   );
+    // compute hour angle
+    float ha = (cos(1.585340737228125) / (cos(lat) * cos(decl)) - tan(lat) * tan(decl));
 
-    if(fabs(ha)>1.0){// we're in the (ant)arctic and there is no rise(or set) today!
+    // we're in the (ant)arctic and there is no rise(or set) today!
+    if (fabs(ha) > 1.0)
         return false;
-    }
 
-    ha=acos(ha);
-    if(rs==false) ha=-ha;
+    ha = acos(ha);
+    if (rs == false)
+        ha = -ha;
 
     // compute minutes from midnight
-    minutes=720+4*(lon-ha)*57.295779513082322-eqt;
+    int minutes = 720 + 4 * (lon - ha) * 57.295779513082322 - eqt;
 
     // convert from UTC back to our timezone
-    minutes+= timezone;
+    minutes += m_tz;
 
     // adjust the time array by minutes
-    when[tl_hour]=0;
-    when[tl_minute]=0;
-    when[tl_second]=0;
-    Adjust(when,minutes);
+    when[HOUR]   = 0;
+    when[MINUTE] = 0;
+    when[SECOND] = 0;
+
+    Adjust(when, minutes);
+
     return true;
 }
 
