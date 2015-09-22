@@ -249,7 +249,7 @@ void Lcd::getRgb(uint16_t&red, uint16_t&green, uint16_t&blue)
     green = m_green;
     blue  = m_blue;
 }
-void Lcd::setRgb(uint16_t &red, uint16_t &green, uint16_t &blue)
+void Lcd::setRgb(const uint16_t &red, const uint16_t &green, const uint16_t &blue)
 {
     m_oldRed   = red;
     m_oldGreen = green;

@@ -20,14 +20,14 @@
 #include <dimmer.h>
 #include <i2cmaster.h>
 
-Dimmer::Dimmer(uint8_t channel)
+Dimmer::Dimmer(uint8_t channel, uint16_t max)
     : m_channel(channel),
       m_offset (channel * 256),
-      ON_L (channel * 4 + LED_ON_L),
-      ON_H (channel * 4 + LED_ON_H),
-      OFF_L(channel * 4 + LED_OFF_L),
-      OFF_H(channel * 4 + LED_OFF_H),
-      m_value(0)
+      ON_L     (channel * 4 + LED_ON_L),
+      ON_H     (channel * 4 + LED_ON_H),
+      OFF_L    (channel * 4 + LED_OFF_L),
+      OFF_H    (channel * 4 + LED_OFF_H),
+      m_value  (0)
 {
     i2c_init();
 
@@ -36,6 +36,8 @@ Dimmer::Dimmer(uint8_t channel)
 
     write(MODE1, &mode1);
     write(MODE2, &mode2);
+
+    setLevel(max);
 }
 Dimmer::~Dimmer()
 {}

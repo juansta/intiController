@@ -60,7 +60,7 @@ public:
     void backlight_off();
 
     void getRgb(uint16_t &red, uint16_t &green, uint16_t &blue);
-    void setRgb(uint16_t &red, uint16_t &green, uint16_t &blue);
+    void setRgb(const uint16_t &red, const uint16_t &green, const uint16_t &blue);
 
     void setContrast(uint8_t new_val);
 

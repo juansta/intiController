@@ -31,24 +31,22 @@ void showrgb(Lcd& lcd, uint8_t offset, uint16_t*vals)
 }
 
 Menu::Menu()
-: m_currentMenu(&Menu::showSplash),
-  m_timeOutLen (120),
-  m_timeOut    (0)
+    : m_currentMenu(&Menu::showSplash),
+      m_timeOutLen (120),
+      m_timeOut    (0)
 {
-    (this->*m_currentMenu)(FOCUS);
-
+    // setup our backlight from stored settings
     Settings setting;
-    Settings::Lcd lcd = setting.getLcd();
-    m_lcd.setRgb(lcd.maxRed, lcd.maxGreen, lcd.maxBlue);
+
     m_timeOutLen = setting.getLcdTimeout();
+    m_lcd.setRgb(setting.getLcd().maxRed, setting.getLcd().maxGreen, setting.getLcd().maxBlue);
+
+
+    (this->*m_currentMenu)(FOCUS);
 }
 
-bool Menu::process(event newEvent)
+void Menu::processTimeout(event newEvent)
 {
-    bool ret = false;
-    menu_item old_menu = m_currentMenu;
-    event_ret result = (this->*m_currentMenu)(newEvent);
-
     // check if event was due to user interaction
     switch (newEvent)
     {
@@ -72,6 +70,15 @@ bool Menu::process(event newEvent)
     default:
         break;
     }
+}
+
+bool Menu::process(event newEvent)
+{
+    bool ret = false;
+    menu_item old_menu = m_currentMenu;
+    event_ret result = (this->*m_currentMenu)(newEvent);
+
+    processTimeout(newEvent);
 
     if (m_currentMenu != old_menu)
         ret = process(FOCUS);

@@ -35,8 +35,8 @@ public:
         uint16_t maxBlue;
         uint16_t maxRed;
         uint16_t maxGreen;
-        uint16_t maxYellow;
         uint16_t maxViolet;
+        uint16_t maxYellow;
     };
 
     struct Lcd

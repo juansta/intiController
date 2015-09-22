@@ -23,10 +23,8 @@
 #include <rotary.h>
 #include <rtc.h>
 #include <menu.h>
-#include <settings.h>
 #include <timer.h>
-#include <tkeeper.h>
-#include <dimmer.h>
+#include <led.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
@@ -37,6 +35,8 @@ int main(void)
     Rtc      rtc;
     Menu     menu;
     Timer    timer;
+
+    Led      led;
 
     clock_prescale_set(clock_div_1);
 
