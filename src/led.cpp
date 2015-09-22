@@ -18,12 +18,21 @@
  *
  */
 
-#include <avr/io.h>
+#include <math.h>
 #include <led.h>
+#include <settings.h>
 
 Led::Led()
+    : m_white(WHITE),
+     m_rblue (ROYAL_BLUE),
+     m_blue  (BLUE),
+     m_red   (RED),
+     m_green (GREEN),
+     m_violet(VIOLET),
+     m_yellow(YELLOW)
 {
-    for (int i = 0; i < 7; i++)
-        m_dimmers.push_back(new Dimmer(i));
+    float something = sin(0);
+
+    something += 0.1f;
 }
 

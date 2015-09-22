@@ -20,21 +20,37 @@
 
 #pragma once
 
-#include <memory>
-#include <vector>
 #include <inttypes.h>
 #include <dimmer.h>
 
 class Led
 {
 public:
-    enum channels {WHITE, ROYAL_BLUE, BLUE, RED, GREEN, VIOLET, ORANGE};
-
     Led();
 
     void newConfiguration();
 
 
 private:
-    std::vector<std::unique_ptr<Dimmer> > m_dimmers;
+    static const uint8_t WHITE      = 0;
+    static const uint8_t ROYAL_BLUE = 1;
+    static const uint8_t BLUE       = 2;
+    static const uint8_t RED        = 3;
+    static const uint8_t GREEN      = 4;
+    static const uint8_t VIOLET     = 5;
+    static const uint8_t YELLOW     = 6;
+    static const uint8_t TOTAL      = 7;
+
+    // need to be seperate (no container)
+    // due to avr-gcc limitation(s)
+    // fair enough as embedded, declare all memory
+    // upfront
+    Dimmer m_white;
+    Dimmer m_rblue;
+    Dimmer m_blue;
+    Dimmer m_red;
+    Dimmer m_green;
+    Dimmer m_violet;
+    Dimmer m_yellow;
+
 };
