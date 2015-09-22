@@ -23,7 +23,7 @@
 class Dimmer
 {
 public:
-    Dimmer (uint8_t channel);
+    Dimmer (uint8_t channel, uint16_t max = 0);
     ~Dimmer();
 
     bool setLevel(uint16_t value);
