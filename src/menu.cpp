@@ -16,6 +16,8 @@
  *
  */
 
+#include <avr/interrupt.h>
+
 #include <menu.h>
 #include <revision>
 #include <rtc.h>
@@ -411,6 +413,8 @@ Menu::event_ret Menu::setTimeout(event newEvent)
     }
      return ret;
 }
+//! Declare function pointer to USB bootloader entry point
+void (*start_bootloader) (void)=(void (*)(void))(0x3800);
 Menu::event_ret Menu::setBootloader(event newEvent)
 {
      event_ret ret = ERROR;
@@ -428,6 +432,13 @@ Menu::event_ret Menu::setBootloader(event newEvent)
             break;
 
         case CLICK:
+            {
+                m_lcd.clear();
+                m_lcd.write("Connect to PC");
+                cli();
+
+                (*start_bootloader)();//! Jumping to bootloader
+            }
             // reset program vector to DFU bootloader
             ret = HANDLED;
             break;
