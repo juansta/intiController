@@ -18,21 +18,67 @@
  *
  */
 
+#include <avr/io.h>
 #include <math.h>
 #include <led.h>
 #include <settings.h>
 
 Led::Led()
-    : m_white(WHITE),
-     m_rblue (ROYAL_BLUE),
-     m_blue  (BLUE),
-     m_red   (RED),
-     m_green (GREEN),
-     m_violet(VIOLET),
-     m_yellow(YELLOW)
+    : m_white (WHITE),
+      m_rblue (ROYAL_BLUE),
+      m_blue  (BLUE),
+      m_red   (RED),
+      m_green (GREEN),
+      m_violet(VIOLET),
+      m_yellow(YELLOW)
 {
-    float something = sin(0);
+    // configure shutdown pin
+    DDRC   &= ~(1 << PC7);
 
-    something += 0.1f;
+    disable();
 }
 
+void Led::disable()
+{
+    // set shutdown signal high
+    PORTC  |= (1 << PC7);
+}
+
+void Led::enable()
+{
+    // set shutdown signal low
+    PORTC  &= ~(1 << PC7);
+}
+
+void Led::step(eDirection direction)
+{
+    uint16_t white  = m_white;
+    uint16_t rblue  = m_rblue;
+    uint16_t blue   = m_blue;
+    uint16_t red    = m_red;
+    uint16_t green  = m_green;
+    uint16_t violet = m_violet;
+    uint16_t yellow = m_yellow;
+
+    if (direction == UP)
+    {
+         m_white.setLevel  ( ++white);
+         m_rblue.setLevel  ( ++rblue);
+         m_blue.setLevel   ( ++blue);
+         m_red.setLevel    ( ++red);
+         m_green.setLevel  ( ++green);
+         m_violet.setLevel ( ++violet);
+         m_yellow.setLevel ( ++yellow);
+    }
+    else
+    {
+         m_white.setLevel  ( --white);
+         m_rblue.setLevel  ( --rblue);
+         m_blue.setLevel   ( --blue);
+         m_red.setLevel    ( --red);
+         m_green.setLevel  ( --green);
+         m_violet.setLevel ( --violet);
+         m_yellow.setLevel ( --yellow);
+    }
+
+}

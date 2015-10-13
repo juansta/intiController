@@ -14,8 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with intiLED.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Original file built from https://github.com/jcw/rtclib
- *
  */
 
 #pragma once
@@ -26,10 +24,13 @@
 class Led
 {
 public:
+    enum eDirection {UP, DOWN};
     Led();
 
-    void newConfiguration();
+    void disable();
+    void enable ();
 
+    void step   (eDirection direction);
 
 private:
     static const uint8_t WHITE      = 0;
