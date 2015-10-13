@@ -31,12 +31,11 @@
 
 int main(void)
 {
+    Led      led;
     Rotary   rotary;
     Rtc      rtc;
     Menu     menu;
     Timer    timer;
-
-    Led      led;
 
     clock_prescale_set(clock_div_1);
 
@@ -44,7 +43,6 @@ int main(void)
 
     while (1)
     {
-
         // check for one second tick
         // this is used for user type interactions and
         // is derived from the real time clock IRQ pulse
@@ -54,22 +52,19 @@ int main(void)
         // check for our internal timer tick
         // this is configured to be triggered
         if (timer.ticked())
+        {
             menu.process(Menu::FAST_TICK);
+            led.step(Led::UP);
+        }
 
         // check our rotary controller for any events
         Rotary::button btn = rotary.check();
         if (btn == Rotary::CLICK)
-        {
             menu.process(Menu::CLICK);
-        }
         else if (btn == Rotary::LEFT)
-        {
             menu.process(Menu::DOWN);
-        }
         else if (btn == Rotary::RIGHT)
-        {
             menu.process(Menu::UP);
-        }
     }
 
     cli();
