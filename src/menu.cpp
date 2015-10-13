@@ -22,6 +22,7 @@
 #include <revision>
 #include <rtc.h>
 #include <settings.h>
+#include <bootloader.h>
 
 
 void showrgb(Lcd& lcd, uint8_t offset, uint16_t*vals)
@@ -413,8 +414,6 @@ Menu::event_ret Menu::setTimeout(event newEvent)
     }
      return ret;
 }
-//! Declare function pointer to USB bootloader entry point
-void (*start_bootloader) (void)=(void (*)(void))(0x3800);
 Menu::event_ret Menu::setBootloader(event newEvent)
 {
      event_ret ret = ERROR;
@@ -435,9 +434,8 @@ Menu::event_ret Menu::setBootloader(event newEvent)
             {
                 m_lcd.clear();
                 m_lcd.write("Connect to PC");
-                cli();
 
-                (*start_bootloader)();//! Jumping to bootloader
+                run_bootloader();
             }
             // reset program vector to DFU bootloader
             ret = HANDLED;
