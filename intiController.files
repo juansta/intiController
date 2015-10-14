@@ -26,3 +26,5 @@ src/tkeeper.cpp
 src/dimmer.cpp
 src/led.cpp
 include/settings.h
+include/controller.h
+src/controller.cpp
