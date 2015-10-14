@@ -41,20 +41,24 @@ int main(void)
 
     sei();
 
+    led.enable();
+
+            led.step(Led::UP);
     while (1)
     {
         // check for one second tick
         // this is used for user type interactions and
         // is derived from the real time clock IRQ pulse
         if (rtc.tick())
+        {
             menu.process(Menu::TICK);
+        }
 
         // check for our internal timer tick
         // this is configured to be triggered
         if (timer.ticked())
         {
             menu.process(Menu::FAST_TICK);
-            led.step(Led::UP);
         }
 
         // check our rotary controller for any events
