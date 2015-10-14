@@ -33,7 +33,7 @@ Led::Led()
       m_yellow(YELLOW)
 {
     // configure shutdown pin
-    DDRC   &= ~(1 << PC7);
+    DDRC   |= (1 << PC7);
 
     disable();
 }
