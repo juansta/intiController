@@ -52,33 +52,11 @@ void Led::enable()
 
 void Led::step(eDirection direction)
 {
-    uint16_t white  = m_white;
-    uint16_t rblue  = m_rblue;
-    uint16_t blue   = m_blue;
-    uint16_t red    = m_red;
-    uint16_t green  = m_green;
-    uint16_t violet = m_violet;
-    uint16_t yellow = m_yellow;
-
-    if (direction == UP)
-    {
-         m_white.setLevel  ( ++white);
-         m_rblue.setLevel  ( ++rblue);
-         m_blue.setLevel   ( ++blue);
-         m_red.setLevel    ( ++red);
-         m_green.setLevel  ( ++green);
-         m_violet.setLevel ( ++violet);
-         m_yellow.setLevel ( ++yellow);
-    }
-    else
-    {
-         m_white.setLevel  ( --white);
-         m_rblue.setLevel  ( --rblue);
-         m_blue.setLevel   ( --blue);
-         m_red.setLevel    ( --red);
-         m_green.setLevel  ( --green);
-         m_violet.setLevel ( --violet);
-         m_yellow.setLevel ( --yellow);
-    }
-
+    m_white  .setLevel(585*1);
+    m_rblue  .setLevel(585*2);
+    m_blue   .setLevel(585*3);
+    m_red    .setLevel(585*4);
+    m_green  .setLevel(585*5);
+    m_violet .setLevel(585*6);
+    m_yellow .setLevel(585*7);
 }
