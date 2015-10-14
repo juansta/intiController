@@ -42,8 +42,9 @@ Menu::Menu()
     Settings setting;
 
     m_timeOutLen = setting.getLcdTimeout();
-    m_lcd.setRgb(setting.getLcd().maxRed, setting.getLcd().maxGreen, setting.getLcd().maxBlue);
-
+    m_lcd.setRgb(setting.getLcd().maxRed,
+                 setting.getLcd().maxGreen,
+                 setting.getLcd().maxBlue);
 
     (this->*m_currentMenu)(FOCUS);
 }
@@ -431,13 +432,11 @@ Menu::event_ret Menu::setBootloader(event newEvent)
             break;
 
         case CLICK:
-            {
-                m_lcd.clear();
-                m_lcd.write("Connect to PC");
+            m_lcd.clear();
+            m_lcd.write("Connect to PC");
 
-                run_bootloader();
-            }
             // reset program vector to DFU bootloader
+            run_bootloader();
             ret = HANDLED;
             break;
 
