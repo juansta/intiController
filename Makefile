@@ -15,7 +15,7 @@ LOCAL_SOURCE =
 # EXTRA_SOURCE_DIR = ../AVR-Programming-Library/
 # EXTRA_SOURCE_FILES = USART.c
 EXTRA_SOURCE_DIR   = ./src/
-EXTRA_SOURCE_FILES = i2cmaster.cpp lcd.cpp rotary.cpp timer.cpp menu.cpp rtc.cpp datetime.cpp eeprom.cpp settings.cpp dimmer.cpp led.cpp controller.cpp
+EXTRA_SOURCE_FILES = i2cmaster.cpp lcd.cpp rotary.cpp timer.cpp menu.cpp rtc.cpp datetime.cpp eeprom.cpp settings.cpp dimmer.cpp led.cpp
 EXTRA_INCLUDE_DIR = ./include/
 
 # List Assembler source files here.

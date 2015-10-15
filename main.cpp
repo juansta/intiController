@@ -24,14 +24,14 @@
 #include <rtc.h>
 #include <menu.h>
 #include <timer.h>
-#include <controller.h>
+#include <led.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
 
 int main(void)
 {
-    Controller controller;
+    Led      led;
     Rotary   rotary;
     Rtc      rtc;
     Menu     menu;
@@ -49,7 +49,6 @@ int main(void)
         if (rtc.tick())
         {
             menu.process(Menu::TICK);
-            controller.newTime(rtc.now());
         }
 
         // check for our internal timer tick

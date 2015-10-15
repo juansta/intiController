@@ -14,8 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with intiLED.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Original file built from https://github.com/jcw/rtclib
- *
  */
 
 #include <avr/io.h>
@@ -50,13 +48,14 @@ void Led::enable()
     PORTC  &= ~(1 << PC7);
 }
 
-void Led::step(eDirection direction)
+void Led::setMode(eMode mode, uint16_t delay)
 {
-    m_white  .setLevel(585*1);
-    m_rblue  .setLevel(585*2);
-    m_blue   .setLevel(585*3);
-    m_red    .setLevel(585*4);
-    m_green  .setLevel(585*5);
-    m_violet .setLevel(585*6);
-    m_yellow .setLevel(585*7);
+    m_mode  = mode;
+    m_delay = delay;
+
+    // we should set up our dimmers here to get a correct slope
+}
+
+void Led::tick()
+{
 }

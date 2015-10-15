@@ -24,13 +24,15 @@
 class Led
 {
 public:
-    enum eDirection {UP, DOWN};
+    enum eMode {UP, DOWN, STEADY};
     Led();
 
     void disable();
     void enable ();
 
-    void step   (eDirection direction);
+    void setMode(eMode mode, uint16_t delay = 0);
+
+    void tick();
 
 private:
     static const uint8_t WHITE      = 0;
@@ -54,4 +56,6 @@ private:
     Dimmer m_violet;
     Dimmer m_yellow;
 
+    eMode    m_mode;
+    uint16_t m_delay;
 };
