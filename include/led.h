@@ -24,26 +24,27 @@
 class Led
 {
 public:
-    enum eMode {UP, DOWN, STEADY};
+    enum eMode    {UP, DOWN, STEADY};
+    enum eChannel {WHITE, ROYAL_BLUE, BLUE, RED, GREEN, VIOLET, YELLOW};
     Led();
 
     void disable();
     void enable ();
 
-    void setMode(eMode mode, uint16_t delay = 0);
+    void setMode(eChannel channel, eMode mode, uint16_t delay = 0);
 
     void tick();
 
 private:
-    static const uint8_t WHITE      = 0;
-    static const uint8_t ROYAL_BLUE = 1;
-    static const uint8_t BLUE       = 2;
-    static const uint8_t RED        = 3;
-    static const uint8_t GREEN      = 4;
-    static const uint8_t VIOLET     = 5;
-    static const uint8_t YELLOW     = 6;
-    static const uint8_t TOTAL      = 7;
+    class Channel
+    {
+        public:
+            Dimmer * dimmer;
+            eMode    mode;
+            uint16_t delay;
+    } ;
 
+    Channel m_dimmers[7];
     // need to be seperate (no container)
     // due to avr-gcc limitation(s)
     // fair enough as embedded, declare all memory
@@ -55,7 +56,4 @@ private:
     Dimmer m_green;
     Dimmer m_violet;
     Dimmer m_yellow;
-
-    eMode    m_mode;
-    uint16_t m_delay;
 };

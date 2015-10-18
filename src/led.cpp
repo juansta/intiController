@@ -30,6 +30,14 @@ Led::Led()
       m_violet(VIOLET),
       m_yellow(YELLOW)
 {
+    m_dimmers[WHITE].dimmer      = &m_white;
+    m_dimmers[ROYAL_BLUE].dimmer = &m_rblue;
+    m_dimmers[BLUE].dimmer       = &m_blue;
+    m_dimmers[RED].dimmer        = &m_red;
+    m_dimmers[GREEN].dimmer      = &m_green;
+    m_dimmers[VIOLET].dimmer     = &m_violet;
+    m_dimmers[YELLOW].dimmer     = &m_yellow;
+
     // configure shutdown pin
     DDRC   |= (1 << PC7);
 
@@ -48,14 +56,18 @@ void Led::enable()
     PORTC  &= ~(1 << PC7);
 }
 
-void Led::setMode(eMode mode, uint16_t delay)
+void Led::setMode(eChannel channel, eMode mode, uint16_t delay)
 {
-    m_mode  = mode;
-    m_delay = delay;
-
-    // we should set up our dimmers here to get a correct slope
+    m_dimmers[channel].mode = mode;
+    m_dimmers[channel].delay = delay;
 }
 
 void Led::tick()
 {
+    Channel   * dimmer = m_dimmers;
+
+    for (uint8_t channel = 0; channel < 7; channel++, dimmer++)
+    {
+
+    }
 }
