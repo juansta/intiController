@@ -1,3 +1,4 @@
 ./include
+./Config
 /usr/avr/include
-/opt/lufa/LUFA/Drivers/USB/Class/Device
+/opt/lufa

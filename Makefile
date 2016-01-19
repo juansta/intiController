@@ -22,13 +22,12 @@ SRC          = main.cpp src/i2cmaster.cpp src/timer.cpp src/rtc.cpp src/datetime
 LUFA_PATH    = /opt/lufa/LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -Iinclude/ -IConfig/
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS      += -mmcu=$(MCU) -DF_USB=$(F_USB)UL -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I./include
+CFLAGS      += -mmcu=$(MCU) -DF_USB=$(F_USB)UL -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I./include -I./Config
 CFLAGS      += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS      += -Wall
 CFLAGS      += -g -ggdb
 CFLAGS      += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
-CFLAGS      += -std=c++11
-CFLAGS      += -ffunction-sections --gc-sections
+# CFLAGS      += -ffunction-sections --gc-sections
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
 LD_FLAGS     =

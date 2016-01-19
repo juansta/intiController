@@ -20,12 +20,9 @@
  *
  */
 
-#include <rotary.h>
 #include <rtc.h>
-#include <menu.h>
 #include <timer.h>
 #include <led.h>
-#include <descriptors.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
@@ -39,32 +36,8 @@
 #include "descriptors.h"
 #include "AppConfig.h"
 
-#include <LUFA/Drivers/Board/LEDs.h>
 #include <LUFA/Drivers/USB/USB.h>
 #include <LUFA/Platform/Platform.h>
-#include <LUFA/Drivers/USB/Class/Device/HIDClassDevice.h>
-
-#if 0
-/* Function Prototypes: */
-void SetupHardware(void);
-
-void EVENT_USB_Device_Connect(void);
-void EVENT_USB_Device_Disconnect(void);
-void EVENT_USB_Device_ConfigurationChanged(void);
-void EVENT_USB_Device_ControlRequest(void);
-void EVENT_USB_Device_StartOfFrame(void);
-
-bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
-                                         uint8_t* const ReportID,
-                                         const uint8_t ReportType,
-                                         void* ReportData,
-                                         uint16_t* const ReportSize);
-void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
-                                          const uint8_t ReportID,
-                                          const uint8_t ReportType,
-                                          const void* ReportData,
-                                          const uint16_t ReportSize);
-#endif
 
 /** Buffer to hold the previously generated HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevHIDReportBuffer[GENERIC_REPORT_SIZE];
@@ -77,10 +50,10 @@ USB_ClassInfo_HID_Device_t Generic_HID_Interface;
 #if 0
 =
 {
-    Config =
+    Config
     {
         InterfaceNumber          = INTERFACE_ID_GenericHID,
-        ReportINEndpoint         =
+        ReportINEndpoint
         {
             Address              = GENERIC_IN_EPADDR,
             Size                 = GENERIC_EPSIZE,
@@ -88,7 +61,7 @@ USB_ClassInfo_HID_Device_t Generic_HID_Interface;
         },
         PrevReportINBuffer       = PrevHIDReportBuffer,
         PrevReportINBufferSize   = sizeof(PrevHIDReportBuffer),
-    }
+    },
 };
 #endif
 
@@ -172,10 +145,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-        uint8_t* Data        = (uint8_t*)ReportData;
-
-        *ReportSize = GENERIC_REPORT_SIZE;
-        return false;
+    return false;
 }
 
 /** HID class driver callback function for the processing of HID reports from the host.
@@ -192,6 +162,4 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const void* ReportData,
                                           const uint16_t ReportSize)
 {
-        uint8_t* Data       = (uint8_t*)ReportData;
-
 }
