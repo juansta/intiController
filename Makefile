@@ -1,8 +1,10 @@
 
+MCU    = atmega32u2
+ARCH   = AVR8
 OBJDIR = obj
 BINDIR = bin
-MCU    = atmega32u2
 F_CPU  = 8000000
+F_USB  = $(F_CPU)
 BAUD   = 38400
 
 ## This is where main() lives
@@ -17,7 +19,7 @@ LOCAL_SOURCE =
 # EXTRA_SOURCE_FILES = USART.c
 EXTRA_SOURCE_DIR   = ./src/
 EXTRA_SOURCE_FILES = i2cmaster.cpp lcd.cpp rotary.cpp timer.cpp menu.cpp rtc.cpp datetime.cpp eeprom.cpp settings.cpp dimmer.cpp led.cpp
-EXTRA_INCLUDE_DIR = ./include/
+EXTRA_INCLUDE_DIR = /opt/lufa/LUFA/Drivers/USB/Class/Device
 
 # List Assembler source files here.
 # # Make them always end in a capital .S.  Files ending in a lowercase .s
@@ -37,7 +39,7 @@ AVRDUDE = avrdude
 AVRDFU  = dfu-programmer
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS  = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_INCLUDE_DIR)
+CFLAGS  = -mmcu=$(MCU) -DF_USB=$(F_USB)UL -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I./include -I$(EXTRA_INCLUDE_DIR)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall
 CFLAGS += -g -ggdb
@@ -78,7 +80,7 @@ all: $(TARGET).hex
 	$(OBJCOPY) -R .eeprom -O ihex $(OBJDIR)/$< $(BINDIR)/$@
 
 %.elf: $(SRC)
-	$(CC) $(CFLAGS) $(SRC) --output $(OBJDIR)/$@
+	$(CC) $(CFLAGS) $(SRC) --output $(OBJDIR)/$@ 
 
 %.eeprom: %.elf
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $(OBJDIR)/$< $(BINDIR)/$@
