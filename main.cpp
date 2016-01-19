@@ -25,17 +25,16 @@
 #include <menu.h>
 #include <timer.h>
 #include <led.h>
+#include <usb.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
 
 int main(void)
 {
-    Rotary   rotary;
+    Usb      usb;
     Rtc      rtc;
-    Menu     menu;
     Timer    timer;
-
     Led      led;
 
     clock_prescale_set(clock_div_1);
@@ -44,33 +43,18 @@ int main(void)
 
     while (1)
     {
-
+        usb.tick();
 
         // check for one second tick
         // this is used for user type interactions and
         // is derived from the real time clock IRQ pulse
         if (rtc.tick())
-            menu.process(Menu::TICK);
+            usb.sendData();
 
         // check for our internal timer tick
         // this is configured to be triggered
         if (timer.ticked())
-            menu.process(Menu::FAST_TICK);
-
-        // check our rotary controller for any events
-        Rotary::button btn = rotary.check();
-        if (btn == Rotary::CLICK)
-        {
-            menu.process(Menu::CLICK);
-        }
-        else if (btn == Rotary::LEFT)
-        {
-            menu.process(Menu::DOWN);
-        }
-        else if (btn == Rotary::RIGHT)
-        {
-            menu.process(Menu::UP);
-        }
+            usb.getData();
     }
 
     cli();
