@@ -25,6 +25,13 @@
 #include <avr/interrupt.h>
 #include <string.h>
 
+#include <LUFA/Platform/Platform.h>
+
+static Usb usb;
+
+/** Buffer to hold the previously generated HID report, for comparison purposes inside the HID class driver. */
+static uint8_t PrevHIDReportBuffer[21];
+
 /** HID class report descriptor. This is a special descriptor constructed with values from the
  *  USBIF HID class specification to describe the reports and capabilities of the HID device. This
  *  descriptor is parsed by the host and its contents used to determine what data (and in what encoding)
@@ -42,6 +49,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[] =
      */
     HID_DESCRIPTOR_VENDOR(0x00, 0x01, 0x02, 0x03, Usb::getReportSize())
 };
+
 
 Usb::Usb()
     //: LanguageString    (USB_STRING_DESCRIPTOR_ARRAY(LANGUAGE_ID_ENG)),
@@ -110,13 +118,13 @@ Usb::Usb()
     ConfigurationDescriptor.HID_ReportINEndpoint.PollingIntervalMS      = 0x05;
 
 
-    Generic_HID_Interface.Config.InterfaceNumber = INTERFACE_ID_GenericHID;
-    Generic_HID_Interface.Config.ReportINEndpoint.Address              = GENERIC_IN_EPADDR;
-    Generic_HID_Interface.Config.ReportINEndpoint.Size                 = GENERIC_EPSIZE;
-    Generic_HID_Interface.Config.ReportINEndpoint.Banks                = 1;
+    this->Config.InterfaceNumber = INTERFACE_ID_GenericHID;
+    this->Config.ReportINEndpoint.Address              = GENERIC_IN_EPADDR;
+    this->Config.ReportINEndpoint.Size                 = GENERIC_EPSIZE;
+    this->Config.ReportINEndpoint.Banks                = 1;
 
-    Generic_HID_Interface.Config.PrevReportINBuffer           = PrevHIDReportBuffer;
-    Generic_HID_Interface.Config.PrevReportINBufferSize       = sizeof(PrevHIDReportBuffer);
+    this->Config.PrevReportINBuffer           = PrevHIDReportBuffer;
+    this->Config.PrevReportINBufferSize       = sizeof(PrevHIDReportBuffer);
 }
 
 Usb::~Usb()
@@ -129,6 +137,10 @@ bool Usb::tick()
 
     return false;
 }
+bool Usb::sendData()
+{}
+bool Usb::getData()
+{}
 /** Event handler for the library USB Connection event. */
 void Usb::EVENT_USB_Device_Connect(void)
 {
@@ -161,8 +173,7 @@ void Usb::EVENT_USB_Device_StartOfFrame(void)
     HID_Device_MillisecondElapsed(&Generic_HID_Interface);
 }
 
-
-uint16_t Usb::CALLBACK_USB_GetDescriptor(const uint16_t wValue,
+uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
                                     const uint8_t wIndex,
                                     const void** const DescriptorAddress)
 {
@@ -214,7 +225,7 @@ uint16_t Usb::CALLBACK_USB_GetDescriptor(const uint16_t wValue,
     return Size;
 }
 
-bool Usb::CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
+bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
                                          uint8_t* const ReportID,
                                          const uint8_t ReportType,
                                          void* ReportData,
@@ -224,7 +235,7 @@ bool Usb::CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const 
     return false;
 }
 
-void Usb::CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
+void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
                                           const uint8_t ReportID,
                                           const uint8_t ReportType,
                                           const void* ReportData,

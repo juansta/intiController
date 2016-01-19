@@ -17,7 +17,8 @@
  */
 
 // Include LUFA driver
-#include <HIDClassDevice.h>
+#include <LUFA/Drivers/USB/USB.h>
+
 
 class Usb
 {
@@ -41,46 +42,6 @@ private:
     void EVENT_USB_Device_ConfigurationChanged(void);
     void EVENT_USB_Device_ControlRequest(void);
     void EVENT_USB_Device_StartOfFrame(void);
-
-    /** This function is called by the library when in device mode, and must be overridden (see library "USB Descriptors"
-     *  documentation) by the application code so that the address and size of a requested descriptor can be given
-     *  to the USB library. When the device receives a Get Descriptor request on the control endpoint, this function
-     *  is called so that the descriptor details can be passed back and the appropriate descriptor sent back to the
-     *  USB host.
-     */
-    uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
-                                        const uint8_t wIndex,
-                                        const void** const DescriptorAddress);
-
-    /** HID class driver callback function for the creation of HID reports to the host.
-     *
-     *  \param[in]     HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced
-     *  \param[in,out] ReportID    Report ID requested by the host if non-zero, otherwise callback should set to the generated report ID
-     *  \param[in]     ReportType  Type of the report to create, either HID_REPORT_ITEM_In or HID_REPORT_ITEM_Feature
-     *  \param[out]    ReportData  Pointer to a buffer where the created report should be stored
-     *  \param[out]    ReportSize  Number of bytes written in the report (or zero if no report is to be sent)
-     *
-     *  \return Boolean \c true to force the sending of the report, \c false to let the library determine if it needs to be sent
-     */
-    bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
-                                             uint8_t* const ReportID,
-                                             const uint8_t ReportType,
-                                             void* ReportData,
-                                             uint16_t* const ReportSize);
-
-    /** HID class driver callback function for the processing of HID reports from the host.
-     *
-     *  \param[in] HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced
-     *  \param[in] ReportID    Report ID of the received report from the host
-     *  \param[in] ReportType  The type of report that the host has sent, either HID_REPORT_ITEM_Out or HID_REPORT_ITEM_Feature
-     *  \param[in] ReportData  Pointer to a buffer where the received report has been stored
-     *  \param[in] ReportSize  Size in bytes of the received HID report
-     */
-    void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo,
-                                              const uint8_t ReportID,
-                                              const uint8_t ReportType,
-                                              const void* ReportData,
-                                              const uint16_t ReportSize);
 
     /** Endpoint address of the Generic HID reporting IN endpoint. */
     static const uint8_t GENERIC_IN_EPADDR = (ENDPOINT_DIR_IN | 1);
@@ -126,17 +87,12 @@ private:
         USB_Descriptor_Endpoint_t             HID_ReportINEndpoint;
     } USB_Descriptor_Configuration_t;
 
-    /** Buffer to hold the previously generated HID report, for comparison purposes inside the HID class driver. */
-    static uint8_t PrevHIDReportBuffer[GENERIC_REPORT_SIZE];
-
-    static const uint8_t FIXED_CONTROL_ENDPOINT_SIZE = 21;
-    static const uint8_t FIXED_NUM_CONFIGURATIONS    = 1;
 
     /** LUFA HID Class driver interface configuration and state information. This structure is
      *  passed to all HID Class driver functions, so that multiple instances of the same class
      *  within a device can be differentiated from one another.
      */
-    USB_ClassInfo_HID_Device_t Generic_HID_Interface;
+    //USB_ClassInfo_HID_Device_t Generic_HID_Interface;
 
     /** Language descriptor structure. This descriptor, located in FLASH memory, is returned when the host requests
      *  the string descriptor with index 0 (the first index). It is actually an array of 16-bit integers, which indicate
