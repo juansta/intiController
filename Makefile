@@ -18,7 +18,7 @@ LOCAL_SOURCE =
 # EXTRA_SOURCE_DIR = ../AVR-Programming-Library/
 # EXTRA_SOURCE_FILES = USART.c
 EXTRA_SOURCE_DIR   = ./src/
-EXTRA_SOURCE_FILES = i2cmaster.cpp lcd.cpp rotary.cpp timer.cpp menu.cpp rtc.cpp datetime.cpp eeprom.cpp settings.cpp dimmer.cpp led.cpp
+EXTRA_SOURCE_FILES = i2cmaster.cpp lcd.cpp rotary.cpp timer.cpp menu.cpp rtc.cpp datetime.cpp eeprom.cpp settings.cpp dimmer.cpp led.cpp usb.cpp
 EXTRA_INCLUDE_DIR = /opt/lufa/LUFA/Drivers/USB/Class/Device
 
 # List Assembler source files here.
@@ -45,7 +45,7 @@ CFLAGS += -Wall
 CFLAGS += -g -ggdb
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=c++11
-CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
+## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
 
 # Optional assembler flags.

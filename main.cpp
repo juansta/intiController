@@ -25,7 +25,6 @@
 #include <menu.h>
 #include <timer.h>
 #include <led.h>
-#include <HIDClassDevice.h>
 
 #include <avr/power.h>
 #include <avr/interrupt.h>
@@ -45,6 +44,7 @@ int main(void)
 
     while (1)
     {
+
 
         // check for one second tick
         // this is used for user type interactions and
